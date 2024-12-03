@@ -6,6 +6,7 @@ import com.summoner.lolhaeduo.common.entity.Timestamped;
 import com.summoner.lolhaeduo.domain.duo.enums.Lane;
 import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -35,11 +36,13 @@ public class Duo extends Timestamped {
 	@Enumerated(EnumType.STRING)
 	private Lane primaryRole;
 
+	@Column(nullable = false)
 	private String primaryChamp;
 
 	@Enumerated(EnumType.STRING)
 	private Lane secondaryRole;
 
+	@Column(nullable = false)
 	private String secondaryChamp;
 
 	@Enumerated(EnumType.STRING)
@@ -49,8 +52,10 @@ public class Duo extends Timestamped {
 
 	private Boolean mic;
 
+	@Column(nullable = false)
 	private String memberId;
 
+	@Column(nullable = false)
 	private String accountId;
 
 	private LocalDateTime deletedAt;
