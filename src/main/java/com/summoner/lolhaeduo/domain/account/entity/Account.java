@@ -27,16 +27,19 @@ public class Account extends Timestamped {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 
-	@Column(unique = true)
+	@Column(unique = true, nullable = false)
 	private String username;
 
+	@Column(nullable = false)
 	private String password;
 
 	@Enumerated(EnumType.STRING)
 	private AccountType accountType;
 
+	@Column(nullable = false)
 	private String summonerName;
 
+	@Column(nullable = false)
 	private String memberId;
 
 	private Account(String username, String password, AccountType accountType, String summonerName, String memberId) {
