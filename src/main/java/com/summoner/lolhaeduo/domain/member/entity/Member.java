@@ -29,11 +29,13 @@ public class Member extends Timestamped {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 
+	@Column(nullable = false)
 	private String username;
 
+	@Column(nullable = false)
 	private String password;
 
-	@Column(unique = true)
+	@Column(unique = true, nullable = false)
 	private String email;
 
 	@Enumerated(EnumType.STRING)
