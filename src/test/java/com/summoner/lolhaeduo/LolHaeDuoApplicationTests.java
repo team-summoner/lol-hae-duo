@@ -1,4 +1,4 @@
-package com.example.lolhaeduo;
+package com.summoner.lolhaeduo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
