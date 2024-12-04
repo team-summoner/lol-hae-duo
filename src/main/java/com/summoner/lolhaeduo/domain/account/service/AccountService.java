@@ -29,6 +29,10 @@ public class AccountService {
     public void linkAccount(LinkAccountRequest request, Long memberId) {
         memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("Not Found Member"));
 
+        if (accountRepository.isMemberAccountLimitExceeded(memberId)) {
+            throw new IllegalArgumentException("Account limit(3) exceeded");
+        }
+
         if (request.getAccountType().equals(AccountType.RIOT)) {
 
             PuuidResponse puuidResponse = riotUtil.extractPuuid(
