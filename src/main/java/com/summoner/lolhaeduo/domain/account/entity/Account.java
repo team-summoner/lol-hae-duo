@@ -24,8 +24,8 @@ import lombok.NoArgsConstructor;
 public class Account extends Timestamped {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	private String id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@Column(unique = true, nullable = false)
 	private String username;
@@ -40,9 +40,9 @@ public class Account extends Timestamped {
 	private String summonerName;
 
 	@Column(nullable = false)
-	private String memberId;
+	private Long memberId;
 
-	private Account(String username, String password, AccountType accountType, String summonerName, String memberId) {
+	private Account(String username, String password, AccountType accountType, String summonerName, Long memberId) {
 		this.username = username;
 		this.password = password;
 		this.accountType = accountType;
@@ -50,7 +50,7 @@ public class Account extends Timestamped {
 		this.memberId = memberId;
 	}
 
-	public static Account of(String username, String password, AccountType accountType, String summonerName, String memberId) {
+	public static Account of(String username, String password, AccountType accountType, String summonerName, Long memberId) {
 		return new Account(username, password, accountType, summonerName, memberId);
 	}
 }
