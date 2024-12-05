@@ -5,6 +5,7 @@ import com.summoner.lolhaeduo.domain.member.dto.LoginResponse;
 import com.summoner.lolhaeduo.domain.member.dto.SignupRequest;
 import com.summoner.lolhaeduo.domain.member.service.MemberService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class MemberController {
     private final MemberService memberService;
     
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<Void> signup(@Valid @RequestBody SignupRequest signupRequest) {
         memberService.signup(signupRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -29,7 +30,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         LoginResponse loginResponse = memberService.login(loginRequest, response);
         return ResponseEntity
                 .status(HttpStatus.OK)
