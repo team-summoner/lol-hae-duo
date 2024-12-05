@@ -29,7 +29,7 @@ public class MemberService {
         }
 
         if (!signupRequest.getPassword().equals(signupRequest.getPasswordConfirmation())) {
-            throw new IllegalArgumentException("비밀번호가 틀립니다.");
+            throw new IllegalArgumentException("입력하신 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
         }
         String encodePassword = passwordEncoder.encode(signupRequest.getPassword());
 
