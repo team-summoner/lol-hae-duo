@@ -31,7 +31,6 @@ public class JwtFilter extends HttpFilter {
         if ( StringUtils.hasText(url) &&
                 ( url.startsWith("/signup")
                         || url.startsWith("/login")
-                        || url.startsWith("/link")
                         || ( url.startsWith("/duo") && method.equals("GET") )
                 )
         ) {
