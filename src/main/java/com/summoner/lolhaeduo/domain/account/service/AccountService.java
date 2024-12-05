@@ -33,6 +33,10 @@ public class AccountService {
             throw new IllegalArgumentException("Account limit(3) exceeded");
         }
 
+        if (accountRepository.existsByUsername(request.getAccountId())) {
+            throw new IllegalArgumentException("Account already exists");
+        }
+
         if (request.getAccountType().equals(AccountType.RIOT)) {
 
             PuuidResponse puuidResponse = riotUtil.extractPuuid(
