@@ -16,22 +16,22 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-@Slf4j(topic = "LoginArgumentResolver")
+@Slf4j(topic = "AuthArgumentResolver")
 @Component
 @AllArgsConstructor
-public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
+public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final JwtUtil jwtUtil;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        boolean hasLoginAnnotation = parameter.getParameterAnnotation(Auth.class) != null;
-        boolean isLoginMemberType = parameter.getParameterType().equals(AuthMember.class);
+        boolean hasAuthAnnotation = parameter.getParameterAnnotation(Auth.class) != null;
+        boolean isAuthMemberType = parameter.getParameterType().equals(AuthMember.class);
 
-        if (hasLoginAnnotation && !isLoginMemberType) {
+        if (hasAuthAnnotation && !isAuthMemberType) {
             throw new IllegalArgumentException("@Auth 이 있지만 파라미터 타입이 AuthMember 가 아닙니다.");
         }
-        if (!hasLoginAnnotation && isLoginMemberType) {
+        if (!hasAuthAnnotation && isAuthMemberType) {
             throw new IllegalArgumentException("@Auth 없이 AuthMember 타입이 요청되었습니다.");
         }
         return true;
