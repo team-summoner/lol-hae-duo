@@ -29,28 +29,24 @@ public class Member extends Timestamped {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(unique = true, nullable = false)
 	private String username;
 
 	@Column(nullable = false)
 	private String password;
-
-	@Column(unique = true, nullable = false)
-	private String email;
 
 	@Enumerated(EnumType.STRING)
 	private UserRole role;
 
 	private LocalDateTime deletedAt;
 
-	private Member(String username, String password, String email, UserRole role) {
+	private Member(String username, String password, UserRole role) {
 		this.username = username;
 		this.password = password;
-		this.email = email;
 		this.role = role;
 	}
 
-	public static Member of(String username, String password, String email, UserRole role) {
-		return new Member(username, password, email, role);
+	public static Member of(String username, String password, UserRole role) {
+		return new Member(username, password, role);
 	}
 }
