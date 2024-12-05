@@ -13,7 +13,7 @@ public class LoginResponse {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public LoginResponse(Long id, String username, UserRole role, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    private LoginResponse(Long id, String username, UserRole role, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
         this.username = username;
         this.role = role;
