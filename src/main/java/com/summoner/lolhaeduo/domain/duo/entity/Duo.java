@@ -54,6 +54,8 @@ public class Duo extends Timestamped {
 
     private String favoritesChamp;
 
+    private Long profileIcon;
+
     @Embedded
     private Kda kda;
 
