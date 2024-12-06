@@ -65,6 +65,72 @@ public class Duo extends Timestamped {
 
     private LocalDateTime deletedAt;
 
+    private Duo(QueueType queueType, Lane primaryRole, String primaryChamp, Lane secondaryRole, String secondaryChamp,
+               Lane targetRole, String memo, Boolean mic, Long memberId, Long accountId) {
+        this.queueType = queueType;
+        this.primaryRole = primaryRole;
+        this.primaryChamp = primaryChamp;
+        this.secondaryRole = secondaryRole;
+        this.secondaryChamp = secondaryChamp;
+        this.targetRole = targetRole;
+        this.memo = memo;
+        this.mic = mic;
+        this.memberId = memberId;
+        this.accountId = accountId;
+    }
+
+    private Duo(QueueType queueType, Lane primaryRole, String primaryChamp, Lane secondaryRole, String secondaryChamp,
+               Lane targetRole, String memo, Boolean mic, String tier, String rank, int wins, int losses, Long memberId, Long accountId) {
+        this.queueType = queueType;
+        this.primaryRole = primaryRole;
+        this.primaryChamp = primaryChamp;
+        this.secondaryRole = secondaryRole;
+        this.secondaryChamp = secondaryChamp;
+        this.targetRole = targetRole;
+        this.memo = memo;
+        this.mic = mic;
+        this.tier = tier;
+        this.rank = rank;
+        this.wins = wins;
+        this.losses = losses;
+        this.memberId = memberId;
+        this.accountId = accountId;
+    }
+
+    public static Duo createQuickOf(QueueType queueType, Lane primaryRole, String primaryChamp, Lane secondaryRole, String secondaryChamp, Lane targetRole, String memo, Boolean mic, Long memberId, Long accountId) {
+        return new Duo(
+                queueType,
+                primaryRole,
+                primaryChamp,
+                secondaryRole,
+                secondaryChamp,
+                targetRole,
+                memo,
+                mic,
+                memberId,
+                accountId
+        );
+    }
+
+    public static Duo createRankOf(QueueType queueType, Lane primaryRole,Lane targetRole, String memo, Boolean mic, String tier, String rank, int wins, int losses, Long memberId, Long accountId) {
+        return new Duo(
+                queueType,
+                primaryRole,
+                null,
+                null,
+                null,
+                targetRole,
+                memo,
+                mic,
+                tier,
+                rank,
+                wins,
+                losses,
+                memberId,
+                accountId
+        );
+    }
+
 
 
 
