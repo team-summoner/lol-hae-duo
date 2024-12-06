@@ -104,7 +104,7 @@ public class Duo extends Timestamped {
         this.accountId = accountId;
     }
 
-    public static Duo createQuickOf(QueueType queueType, Lane primaryRole, String primaryChamp, Lane secondaryRole, String secondaryChamp, Lane targetRole, String memo, Boolean mic, Long memberId, Long accountId) {
+    public static Duo quickOf(QueueType queueType, Lane primaryRole, String primaryChamp, Lane secondaryRole, String secondaryChamp, Lane targetRole, String memo, Boolean mic, Long memberId, Long accountId) {
         return new Duo(
                 queueType,
                 primaryRole,
@@ -119,7 +119,7 @@ public class Duo extends Timestamped {
         );
     }
 
-    public static Duo createRankOf(QueueType queueType, Lane primaryRole,Lane targetRole, String memo, Boolean mic, String tier, String rank, int wins, int losses, Long memberId, Long accountId) {
+    public static Duo rankOf(QueueType queueType, Lane primaryRole,Lane targetRole, String memo, Boolean mic, String tier, String rank, int wins, int losses, Long memberId, Long accountId) {
         return new Duo(
                 queueType,
                 primaryRole,
