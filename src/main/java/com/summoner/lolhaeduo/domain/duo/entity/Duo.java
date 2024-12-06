@@ -22,21 +22,22 @@ public class Duo extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private QueueType queueType;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Lane primaryRole;
 
-    @Column(nullable = false)
     private String primaryChamp;
 
     @Enumerated(EnumType.STRING)
     private Lane secondaryRole;
 
-    @Column(nullable = false)
     private String secondaryChamp;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Lane targetRole;
 
