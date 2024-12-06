@@ -11,13 +11,13 @@ import lombok.NoArgsConstructor;
 public class ProfileIcon {
 
     @Id
-    private Integer id;
+    private int id;
 
-    private ProfileIcon(Integer id) {
+    private ProfileIcon(int id) {
         this.id = id;
     }
 
-    public static ProfileIcon of(Integer id) {
+    public static ProfileIcon of(int id) {
         return new ProfileIcon(id);
     }
 }
