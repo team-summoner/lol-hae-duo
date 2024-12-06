@@ -270,4 +270,26 @@ public class DuoService {
 
         return epochTime;
     }
+
+    private final DuoRepository duoRepository;
+
+    public DuoService(DuoRepository duoRepository) { // 생성자를 통해 주입
+        this.duoRepository = duoRepository;
+    }
+
+    public void deleteDuoById(Long duoId, AuthMember authMember) {
+        Duo existDuo = duoRepository.findById(duoId).orElseThrow(
+                () -> new IllegalArgumentException("듀오가 존재하지 않습니다.")
+        );
+
+        if (!authMember.getMemberId().equals(existDuo.getMemberId())) {
+            if (!authMember.getRole().equals(UserRole.ADMIN)) {
+                throw new IllegalArgumentException("삭제 권한이 없습니다.");
+            }
+        }
+
+        duoRepository.deleteById(duoId);
+    }
+
+
 }
