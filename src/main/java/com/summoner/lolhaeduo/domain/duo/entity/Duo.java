@@ -44,6 +44,19 @@ public class Duo extends Timestamped {
 
     private Boolean mic;
 
+    private String tier;
+
+    private String rank;
+
+    private int wins;
+
+    private int losses;
+
+    private String favoritesChamp;
+
+    @Embedded
+    private Kda kda;
+
     @Column(nullable = false)
     private Long memberId;
 
@@ -52,40 +65,7 @@ public class Duo extends Timestamped {
 
     private LocalDateTime deletedAt;
 
-    private Duo(QueueType queueType, Lane primaryRole, String primaryChamp, Lane secondaryRole, String secondaryChamp,
-                Lane targetRole, String memo, Boolean mic, Long memberId, Long accountId) {
-        this.queueType = queueType;
-        this.primaryRole = primaryRole;
-        this.primaryChamp = primaryChamp;
-        this.secondaryRole = secondaryRole;
-        this.secondaryChamp = secondaryChamp;
-        this.targetRole = targetRole;
-        this.memo = memo;
-        this.mic = mic;
-        this.memberId = memberId;
-        this.accountId = accountId;
-    }
 
-    private Duo(QueueType queueType, Lane primaryRole, Lane targetRole, String memo, Boolean mic, Long memberId,
-                Long accountId) {
-        this.queueType = queueType;
-        this.primaryRole = primaryRole;
-        this.targetRole = targetRole;
-        this.memo = memo;
-        this.mic = mic;
-        this.memberId = memberId;
-        this.accountId = accountId;
-    }
 
-    public static Duo quickOf(QueueType queueType, Lane primaryRole, String primaryChamp, Lane secondaryRole,
-                              String secondaryChamp, Lane targetRole, String memo, Boolean mic, Long memberId, Long accountId) {
-        return new Duo(queueType, primaryRole, primaryChamp, secondaryRole, secondaryChamp, targetRole, memo, mic,
-                memberId, accountId);
-    }
-
-    public static Duo rankOf(QueueType queueType, Lane primaryRole, Lane targetRole, String memo, Boolean mic,
-                             Long memberId, Long accountId) {
-        return new Duo(queueType, primaryRole, targetRole, memo, mic, memberId, accountId);
-    }
 
 }
