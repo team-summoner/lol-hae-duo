@@ -45,12 +45,16 @@ public class Duo extends Timestamped {
 
     private Boolean mic;
 
+    @Column(nullable = false)
     private String tier;
 
+    @Column(nullable = false)
     private String rank;
 
+    @Column(nullable = false)
     private int wins;
 
+    @Column(nullable = false)
     private int losses;
 
     private String favoritesChamp;
