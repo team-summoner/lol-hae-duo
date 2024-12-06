@@ -45,4 +45,14 @@ public class DuoController {
                 .status(HttpStatus.OK)
                 .body(response);
     }
+
+    private final DuoService duoService;
+
+    @DeleteMapping("/duo/{duoId}")
+    public void deleteDuo(@PathVariable Long duoId,
+                          @Auth AuthMember authMember
+                          ) {
+        // Duo 삭제 로직
+        duoService.deleteDuoById(duoId,authMember);
+    }
 }
