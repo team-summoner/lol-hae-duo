@@ -1,9 +1,11 @@
 package com.summoner.lolhaeduo.client.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
+@RequiredArgsConstructor
 public class MatchResponse {
-    private MetadataResponse metadata;
-    private InfoResponse info;
+    private final MetadataResponse metadata;
+    private final InfoResponse info;
 }
