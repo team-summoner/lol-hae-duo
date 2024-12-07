@@ -1,14 +1,14 @@
 package com.summoner.lolhaeduo.client.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
-@AllArgsConstructor
+@Getter
+@RequiredArgsConstructor
 public class FormattedMatchResponse {
-    private String championName;
-    private int kills;
-    private int deaths;
-    private int assists;
-    private boolean win;
+    private final String championName;
+    private final int kills;
+    private final int deaths;
+    private final int assists;
+    private final boolean win;
 }
