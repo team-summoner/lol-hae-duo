@@ -118,13 +118,19 @@ public class Duo extends Timestamped {
                               Long memberId, Long accountId) {
         return new Duo(
                 queueType,
-                primaryRole, primaryChamp,
-                secondaryRole, secondaryChamp,
+                primaryRole,
+                primaryChamp,
+                secondaryRole,
+                secondaryChamp,
                 targetRoles,
-                memo, mic,
-                tier, rank,
-                wins, losses,
-                memberId, accountId
+                memo,
+                mic,
+                tier,
+                rank,
+                wins,
+                losses,
+                memberId,
+                accountId
         );
     }
 
@@ -136,13 +142,19 @@ public class Duo extends Timestamped {
                              Long memberId, Long accountId) {
         return new Duo(
                 queueType,
-                primaryRole, null,
-                null, null,
+                primaryRole,
+                null,
+                null,
+                null,
                 targetRoles,
-                memo, mic,
-                tier, rank,
-                wins, losses,
-                memberId, accountId
+                memo,
+                mic,
+                tier,
+                rank,
+                wins,
+                losses,
+                memberId,
+                accountId
         );
     }
 
@@ -154,13 +166,19 @@ public class Duo extends Timestamped {
                              Long memberId, Long accountId) {
         return new Duo(
                 queueType,
-                primaryRole, null,
-                null, null,
+                primaryRole,
+                null,
+                null,
+                null,
                 targetRoles,
-                memo, mic,
-                tier, rank,
-                wins, losses,
-                memberId, accountId
+                memo,
+                mic,
+                tier,
+                rank,
+                wins,
+                losses,
+                memberId,
+                accountId
         );
     }
 
