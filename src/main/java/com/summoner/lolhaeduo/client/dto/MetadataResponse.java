@@ -1,12 +1,14 @@
 package com.summoner.lolhaeduo.client.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-@Data
+@Getter
+@RequiredArgsConstructor
 public class MetadataResponse {
-    private String dataVersion;
-    private String matchId;
-    private List<String> participants;
+    private final String dataVersion;
+    private final String matchId;
+    private final List<String> participants;
 }
