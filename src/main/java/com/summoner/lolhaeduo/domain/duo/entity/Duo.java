@@ -164,6 +164,9 @@ public class Duo extends Timestamped {
         );
     }
 
+    /*
+    // 듀오 찾기 수정이 진행되면, 변경될 수 있는 부분입니다.
+    */
     public void update(QueueType queueType,
                        Lane primaryRole, String primaryChamp,
                        Lane secondaryRole, String secondaryChamp,
