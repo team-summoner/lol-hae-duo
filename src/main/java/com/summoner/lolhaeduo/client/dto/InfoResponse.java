@@ -1,10 +1,12 @@
 package com.summoner.lolhaeduo.client.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-@Data
+@Getter
+@RequiredArgsConstructor
 public class InfoResponse {
-    private List<ParticipantsResponse> participants;
+    private final List<ParticipantsResponse> participants;
 }
