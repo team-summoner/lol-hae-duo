@@ -1,14 +1,16 @@
 package com.summoner.lolhaeduo.client.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
+@RequiredArgsConstructor
 public class ParticipantsResponse {
-    private String riotIdGameName;
-    private String riotIdTagline;
-    private int assists;
-    private String championName;
-    private int deaths;
-    private int kills;
-    private boolean win;
+    private final String riotIdGameName;
+    private final String riotIdTagline;
+    private final int assists;
+    private final String championName;
+    private final int deaths;
+    private final int kills;
+    private final boolean win;
 }
