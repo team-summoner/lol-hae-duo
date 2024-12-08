@@ -9,8 +9,11 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -59,15 +62,22 @@ public class RiotClient {
         return restTemplate.getForObject(url, SummonerResponse.class);
     }
 
-    public LeagueEntryResponse extractLeagueInfo(String summonerId, AccountServer server) {
+    public List<LeagueEntryResponse> extractLeagueInfo(String summonerId, AccountServer server) {
         String serverDomain = server.name().toLowerCase();
 
         String url = String.format(
                 "https://%s.api.riotgames.com/lol/league/v4/entries/by-summoner/%s?api_key=%s",
                 serverDomain, summonerId, apiKey
         );
-
-        return restTemplate.getForObject(url, LeagueEntryResponse.class);
+        try {
+            LeagueEntryResponse[] responseArray = restTemplate.getForObject(url, LeagueEntryResponse[].class);
+            if (responseArray == null) {
+                return new ArrayList<>();
+            }
+            return new ArrayList<>(Arrays.asList(responseArray));
+        } catch (RestClientException e) {
+            throw new RuntimeException("Failed to fetch league info from API", e);
+        }
     }
 
     public List<String> extractMatchIds(Long startTime, Long endTime, Integer queue, String type,
