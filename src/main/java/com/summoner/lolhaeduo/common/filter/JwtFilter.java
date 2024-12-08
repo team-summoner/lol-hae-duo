@@ -45,5 +45,8 @@ public class JwtFilter extends HttpFilter {
         log.info("토큰 = {}", token);
 
         jwtUtil.validateToken(token);
+
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
+
     }
 }
