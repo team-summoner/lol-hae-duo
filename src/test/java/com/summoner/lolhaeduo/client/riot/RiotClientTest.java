@@ -1,6 +1,7 @@
 package com.summoner.lolhaeduo.client.riot;
 
 import com.summoner.lolhaeduo.client.dto.FormattedMatchResponse;
+import com.summoner.lolhaeduo.client.dto.LeagueEntryResponse;
 import com.summoner.lolhaeduo.client.dto.PuuidResponse;
 import com.summoner.lolhaeduo.client.dto.SummonerResponse;
 import com.summoner.lolhaeduo.domain.account.enums.AccountRegion;
@@ -51,6 +52,21 @@ class RiotClientTest {
 
         // then
         assertThat(response).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Extract LeagueInfo using summonerId: SUCCESS")
+    void test3() {
+        // given
+        String summonerId = "tjEbbL2gjCFL4BTeV-43s2wEzfwTxf5_Ajt6AIRR3_GWzbTcqtW4Rwk2uw";
+        AccountServer server = AccountServer.KR;
+
+        // when
+        List<LeagueEntryResponse> response = riotClient.extractLeagueInfo(summonerId, server);
+
+        // then
+        assertThat(response).isNotNull();
+
     }
 
     @Test
