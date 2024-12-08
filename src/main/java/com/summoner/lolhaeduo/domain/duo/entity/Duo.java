@@ -10,8 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Entity
@@ -39,11 +37,8 @@ public class Duo extends Timestamped {
 
     private String secondaryChamp;
 
-    @ElementCollection  // <duo_id, Lane>
-    @CollectionTable(name = "TARGET_ROLE", joinColumns = @JoinColumn(name = "DUO_ID"))
-    @Column
     @Enumerated(EnumType.STRING)
-    private List<Lane> targetRoles = new ArrayList<>();
+    private Lane targetRole;
 
     private String memo;
 
@@ -53,7 +48,7 @@ public class Duo extends Timestamped {
     private String tier;
 
     @Column(nullable = false)
-    private String rank;
+    private String ranks;
 
     @Column(nullable = false)
     private int wins;
@@ -77,31 +72,17 @@ public class Duo extends Timestamped {
     private LocalDateTime deletedAt;
 
     private Duo(QueueType queueType, Lane primaryRole, String primaryChamp, Lane secondaryRole, String secondaryChamp,
-                List<Lane> targetRoles, String memo, Boolean mic, Long memberId, Long accountId) {
+                Lane targetRole, String memo, Boolean mic, String tier, String ranks, int wins, int losses, Long memberId, Long accountId) {
         this.queueType = queueType;
         this.primaryRole = primaryRole;
         this.primaryChamp = primaryChamp;
         this.secondaryRole = secondaryRole;
         this.secondaryChamp = secondaryChamp;
-        this.targetRoles = targetRoles;
-        this.memo = memo;
-        this.mic = mic;
-        this.memberId = memberId;
-        this.accountId = accountId;
-    }
-
-    private Duo(QueueType queueType, Lane primaryRole, String primaryChamp, Lane secondaryRole, String secondaryChamp,
-                List<Lane> targetRoles, String memo, Boolean mic, String tier, String rank, int wins, int losses, Long memberId, Long accountId) {
-        this.queueType = queueType;
-        this.primaryRole = primaryRole;
-        this.primaryChamp = primaryChamp;
-        this.secondaryRole = secondaryRole;
-        this.secondaryChamp = secondaryChamp;
-        this.targetRoles = targetRoles;
+        this.targetRole = targetRole;
         this.memo = memo;
         this.mic = mic;
         this.tier = tier;
-        this.rank = rank;
+        this.ranks = ranks;
         this.wins = wins;
         this.losses = losses;
         this.memberId = memberId;
@@ -111,7 +92,7 @@ public class Duo extends Timestamped {
     public static Duo quickOf(QueueType queueType,
                               Lane primaryRole, String primaryChamp,
                               Lane secondaryRole, String secondaryChamp,
-                              List<Lane> targetRoles,
+                              Lane targetRole,
                               String memo, Boolean mic,
                               String tier, String rank,
                               int wins, int losses, // 최근 20게임 승패
@@ -122,7 +103,7 @@ public class Duo extends Timestamped {
                 primaryChamp,
                 secondaryRole,
                 secondaryChamp,
-                targetRoles,
+                targetRole,
                 memo,
                 mic,
                 tier,
@@ -135,7 +116,7 @@ public class Duo extends Timestamped {
     }
 
     public static Duo soloOf(QueueType queueType,
-                             Lane primaryRole, List<Lane> targetRoles,
+                             Lane primaryRole, Lane targetRole,
                              String memo, Boolean mic,
                              String tier, String rank,
                              int wins, int losses,  // League API 에서 호출한 시즌 승률 (솔로 랭크 = 개인 게임)
@@ -146,7 +127,7 @@ public class Duo extends Timestamped {
                 null,
                 null,
                 null,
-                targetRoles,
+                targetRole,
                 memo,
                 mic,
                 tier,
@@ -158,8 +139,9 @@ public class Duo extends Timestamped {
         );
     }
 
+
     public static Duo flexOf(QueueType queueType,
-                             Lane primaryRole, List<Lane> targetRoles,
+                             Lane primaryRole, Lane targetRole,
                              String memo, Boolean mic,
                              String tier, String rank,
                              int wins, int losses,  // League API 에서 호출한 시즌 승률 (자유 랭크 = 팀 게임)
@@ -170,7 +152,7 @@ public class Duo extends Timestamped {
                 null,
                 null,
                 null,
-                targetRoles,
+                targetRole,
                 memo,
                 mic,
                 tier,
@@ -188,7 +170,7 @@ public class Duo extends Timestamped {
     public void update(QueueType queueType,
                        Lane primaryRole, String primaryChamp,
                        Lane secondaryRole, String secondaryChamp,
-                       List<Lane> targetRoles,
+                       Lane targetRole,
                        String memo, Boolean mic
     ) {
         this.queueType = queueType;
@@ -196,7 +178,7 @@ public class Duo extends Timestamped {
         this.primaryChamp = primaryChamp;
         this.secondaryRole = secondaryRole;
         this.secondaryChamp = secondaryChamp;
-        this.targetRoles = targetRoles;
+        this.targetRole = targetRole;
         this.memo = memo;
         this.mic = mic;
     }
