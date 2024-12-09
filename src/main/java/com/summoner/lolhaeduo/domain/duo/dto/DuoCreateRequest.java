@@ -16,6 +16,7 @@ public class DuoCreateRequest {
     private Lane targetRole;
     private String memo;
     private Boolean mic;
+    private Long profileIcon;
 
 
     public void validate() {
