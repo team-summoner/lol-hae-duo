@@ -182,4 +182,11 @@ public class Duo extends Timestamped {
         this.memo = memo;
         this.mic = mic;
     }
+
+    public int calculateWinRate(int wins, int losses) {
+        if (wins + losses == 0) {
+            return 0;
+        }
+        return ((wins * 100) / (wins + losses));
+    }
 }
