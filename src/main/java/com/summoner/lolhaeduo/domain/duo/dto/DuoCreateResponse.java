@@ -17,6 +17,7 @@ public class DuoCreateResponse {
     private Lane targetRole;
     private String memo;
     private Boolean mic;
+    private String profileIcon;
     private Long memberId;
     private Long accountId;
     private int winRate;
@@ -31,6 +32,7 @@ public class DuoCreateResponse {
         this.targetRole = duo.getTargetRole();
         this.memo = duo.getMemo();
         this.mic = duo.getMic();
+        this.profileIcon = duo.getProfileIcon();
         this.memberId = duo.getMemberId();
         this.accountId = duo.getAccountId();
         this.winRate = winRate;
