@@ -31,9 +31,9 @@ public class DuoUpdateRequest {
     private Boolean mic;            // 마이크
 
     // 큐 타입에 따른 유효성 검사
-    @AssertTrue(message = "큐 타입이 빠른 대전인 경우, primaryChamp 와 secondaryRole, secondaryChamp 는 NULL 이어야 합니다.")
-    public boolean isFlexQueueTypeValid() {
-        if (queueType == QueueType.FLEX) {
+    @AssertTrue(message = "큐 타입이 빠른 대전인 경우, primaryChamp 와 secondaryRole, secondaryChamp 는 NULL 이 아니어야 합니다.")
+    public boolean isQuickQueueTypeValid() {
+        if (queueType != QueueType.QUICK) {
             return primaryChamp == null && secondaryRole == null && secondaryChamp == null;
         }
         return true;
