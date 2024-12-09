@@ -81,8 +81,9 @@ public class DuoService {
             default -> throw new IllegalArgumentException("Queue Type 잘못됨");
         }
         duoRepository.save(duo);
+        int winRate = duo.calculateWinRate(selectedRankInfo.getWins(), selectedRankInfo.getLosses());
 
-        return new DuoCreateResponse(duo);
+        return new DuoCreateResponse(duo, winRate);
     }
 
     private static LeagueEntryResponse getSelectedRankInfo(List<LeagueEntryResponse> rankInfo, QueueType queueType) {
