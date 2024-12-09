@@ -19,8 +19,9 @@ public class DuoCreateResponse {
     private Boolean mic;
     private Long memberId;
     private Long accountId;
+    private int winRate;
 
-    public DuoCreateResponse(Duo duo) {
+    public DuoCreateResponse(Duo duo, int winRate) {
         this.id = duo.getId();
         this.queueType = duo.getQueueType();
         this.primaryRole = duo.getPrimaryRole();
@@ -32,5 +33,6 @@ public class DuoCreateResponse {
         this.mic = duo.getMic();
         this.memberId = duo.getMemberId();
         this.accountId = duo.getAccountId();
+        this.winRate = winRate;
     }
 }
