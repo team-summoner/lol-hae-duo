@@ -149,10 +149,6 @@ public class DuoService {
 
         Long duoAccountId = duo.getAccountId();
         Account duoLinkedAccount = accountRepository.findById(duoAccountId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 롤 계정입니다."));
-//        if (!duoLinkedAccount.getMemberId().equals(memberId)) {
-//            throw new IllegalStateException("듀오 신청자의 롤 계정이 아닙니다.");
-//        }
-//        // 중복되는 검증 로직인 듯 합니다.
 
         // todo
         //  - 삭제된 롤 계정인지 확인 -> RSO 연동 후 진행
@@ -188,8 +184,9 @@ public class DuoService {
         int kills = 0;
         int deaths = 0;
         int assists = 0;
+        int daysBefore = 30;
 
-        long startTime = calculateStartTime();  // 빠른 대전일 때, 조회할 기간의 시작 시점; 한 달(30일) 전
+        long startTime = calculateStartTime(daysBefore);    // 빠른 대전일 때, 조회할 기간의 시작 시점; 한 달(30일) 전
         Long endTime = null;        // 빠른 대전일 때, 조회할 기간의 종료 시점 (현재라 설정 안 함)
         Integer queue = 490;        // 빠른 대전의 specific queue id; 490
         String type = "normal";     // 빠른 대전의 type; normal
@@ -259,13 +256,13 @@ public class DuoService {
         return RecordResponse.of(wins, losses, kills, deaths, assists, playCounts, kda);
     }
 
-    // 현재로부터 한 달(30일) 전 Epoch timestamp
-    public long calculateStartTime() {
+    // 현재로부터 days일 전 Epoch timestamp 계산 메서드
+    public long calculateStartTime(int days) {
         // 현재 시간
         Instant now = Instant.now();
 
         // 30일 전 계산
-        Instant thirtyDaysAgo = now.minus(30, ChronoUnit.DAYS);
+        Instant thirtyDaysAgo = now.minus(days, ChronoUnit.DAYS);
 
         // Epoch Time 으로 변환
         long epochTime = thirtyDaysAgo.getEpochSecond();
