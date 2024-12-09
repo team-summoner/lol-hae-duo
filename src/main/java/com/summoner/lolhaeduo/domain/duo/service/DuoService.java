@@ -21,7 +21,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DuoService {
-
     private final DuoRepository duoRepository;
     private final AccountRepository accountRepository;
     private final VersionRepository versionRepository;
@@ -33,11 +32,12 @@ public class DuoService {
         Long linkedAccountId = linkedAccount.getId();
 
         String profileIconUrl = getProfileIconUrl(linkedAccount);
+        String encryptedSummonerId = linkedAccount.getAccountDetail().getEncryptedSummonerId();
 
-        List<LeagueEntryResponse> rankInfo = getRankInfo(linkedAccount);
+        List<LeagueEntryResponse> rankInfo = riotClient.extractLeagueInfo(encryptedSummonerId, linkedAccount.getServer());
 
-        QueueType queueType = QueueType.valueOf(request.getQueueType().toString());
-        LeagueEntryResponse selectedRankInfo = getSelectedRankInfo(rankInfo, queueType);
+        QueueType queueType = request.getQueueType();
+        LeagueEntryResponse selectedRankInfo = getSelectedRankInfoByQueueType(rankInfo, queueType);
 
         Duo duo;
         switch (queueType) {
@@ -123,20 +123,10 @@ public class DuoService {
         // 아닐땐  String latestVersionFromApi = DataDragonScheduler.fetchLatestVersion();의 값을 리턴?
     }
 
-    private static LeagueEntryResponse getSelectedRankInfo(List<LeagueEntryResponse> rankInfo, QueueType queueType) {
+    private LeagueEntryResponse getSelectedRankInfoByQueueType(List<LeagueEntryResponse> rankInfo, QueueType queueType) {
         return rankInfo.stream()
                 .filter(info -> QueueType.fromRiotQueueType(info.getQueueType()) == queueType)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("해당 큐 타입에 대한 랭크 정보를 찾을 수 없습니다."));
-    }
-
-    // 랭크 티어 가져오기
-    private List<LeagueEntryResponse> getRankInfo(Account linkedAccount) {
-        String encryptedSummonerId = linkedAccount.getAccountDetail().getEncryptedSummonerId();
-
-        return riotClient.extractLeagueInfo(
-                encryptedSummonerId,
-                linkedAccount.getServer()
-        );
     }
 }
