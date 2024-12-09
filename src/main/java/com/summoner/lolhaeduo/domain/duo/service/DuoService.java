@@ -29,6 +29,8 @@ public class DuoService {
         List<LeagueEntryResponse> rankInfo = getRankInfo(linkedAccount);
 
         QueueType queueType = QueueType.valueOf(request.getQueueType().toString());
+        LeagueEntryResponse selectedRankInfo = getSelectedRankInfo(rankInfo, queueType);
+
         Duo duo;
         switch (queueType) {
 //            case QUICK -> duo = Duo.quickOf(
@@ -44,11 +46,6 @@ public class DuoService {
 //                    linkedAccountId
 //            );
             case SOLO -> {
-                LeagueEntryResponse selectedRankInfo = rankInfo.stream()
-                        .filter(info -> QueueType.fromRiotQueueType(info.getQueueType()) == queueType)
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("해당 큐 타입에 대한 랭크 정보를 찾을 수 없습니다."));
-
                 duo = Duo.soloOf(
                         request.getQueueType(),
                         request.getPrimaryRole(),
@@ -62,14 +59,10 @@ public class DuoService {
                         memberId,
                         linkedAccountId
                 );
+
             }
 
             case FLEX -> {
-                LeagueEntryResponse selectedRankInfo = rankInfo.stream()
-                        .filter(info -> QueueType.fromRiotQueueType(info.getQueueType()) == queueType)
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("해당 큐 타입에 대한 랭크 정보를 찾을 수 없습니다."));
-
                 duo = Duo.flexOf(
                         request.getQueueType(),
                         request.getPrimaryRole(),
@@ -88,7 +81,15 @@ public class DuoService {
             default -> throw new IllegalArgumentException("Queue Type 잘못됨");
         }
         duoRepository.save(duo);
+
         return new DuoCreateResponse(duo);
+    }
+
+    private static LeagueEntryResponse getSelectedRankInfo(List<LeagueEntryResponse> rankInfo, QueueType queueType) {
+        return rankInfo.stream()
+                .filter(info -> QueueType.fromRiotQueueType(info.getQueueType()) == queueType)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("해당 큐 타입에 대한 랭크 정보를 찾을 수 없습니다."));
     }
 
     // 랭크 티어 가져오기
