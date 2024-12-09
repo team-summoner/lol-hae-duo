@@ -46,7 +46,8 @@ class DuoServiceTest {
 
         // then : 이 값이 나와야한다.
         Optional<Duo> deletedDuo = duoRepository.findById(duo.getId());
-        Assertions.assertTrue(deletedDuo.isEmpty(), "Duo가 삭제되어야 합니다.");
+        Assertions.assertTrue(deletedDuo.isPresent());
+        Assertions.assertNotNull(deletedDuo.get().getDeletedAt(),"deletedAt 필드는 null이어야 합니다");
     }
 
     // 2. 삭제가 정상적으로 이루어진 경우 (매니저 권한 멤버가 삭제 요청을 할 경우)
@@ -63,7 +64,8 @@ class DuoServiceTest {
         duoService.deleteDuoById(duo.getId(), authMember);
         //then
         Optional<Duo> deletedDuo = duoRepository.findById(duo.getId());
-        Assertions.assertTrue(deletedDuo.isEmpty(), "Duo가 삭제되어야 합니다");
+        Assertions.assertTrue(deletedDuo.isPresent());
+        Assertions.assertNotNull(deletedDuo.get().getDeletedAt(), "deletedAt 필드는 null이어야 합니다");
 
     }
 
