@@ -287,6 +287,9 @@ public class DuoService {
                 throw new IllegalArgumentException("삭제 권한이 없습니다.");
             }
         }
+        // Soft Delete 처리: 삭제 시간 기록
+        existDuo.delete();
+        duoRepository.save(existDuo);  // 엔티티를 업데이트하여 삭제 시간 저장
 
         duoRepository.deleteById(duoId);
     }
