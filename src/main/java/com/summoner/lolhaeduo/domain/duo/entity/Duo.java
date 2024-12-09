@@ -152,6 +152,7 @@ public class Duo extends Timestamped {
         );
     }
 
+
     public static Duo flexOf(QueueType queueType,
                              Lane primaryRole, Lane targetRole,
                              String memo, Boolean mic,
