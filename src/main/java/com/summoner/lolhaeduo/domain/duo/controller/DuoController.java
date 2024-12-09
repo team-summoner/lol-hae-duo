@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/duo")
 @RequiredArgsConstructor
@@ -46,13 +48,13 @@ public class DuoController {
                 .body(response);
     }
 
-    private final DuoService duoService;
-
     @DeleteMapping("/duo/{duoId}")
-    public void deleteDuo(@PathVariable Long duoId,
-                          @Auth AuthMember authMember
-                          ) {
+    public ResponseEntity<Void> deleteDuo(@PathVariable Long duoId,
+                                          @Auth AuthMember authMember) {
         // Duo 삭제 로직
-        duoService.deleteDuoById(duoId,authMember);
+        duoService.deleteDuoById(duoId, authMember);
+
+        // HTTP 상태 코드 204 반환
+        return ResponseEntity.noContent().build();
     }
 }
