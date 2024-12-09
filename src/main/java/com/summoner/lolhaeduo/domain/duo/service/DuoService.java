@@ -112,15 +112,10 @@ public class DuoService {
                 latestVersion, accountProfileIconId
         );
     }
-
+    // todo 게임버전 api로 변경하면 로직 변경해야함
     private String getLatestVersion() {
         Version latestVersion = versionRepository.findLatestVersion();
-        if (latestVersion == null) {
-            throw new IllegalArgumentException("최신버전이 없습니다");
-        }
         return latestVersion.getVersionNumber();
-        // latestVersion != null일때,  return latestVersion.getVersionNumber();
-        // 아닐땐  String latestVersionFromApi = DataDragonScheduler.fetchLatestVersion();의 값을 리턴?
     }
 
     private LeagueEntryResponse getSelectedRankInfoByQueueType(List<LeagueEntryResponse> rankInfo, QueueType queueType) {
@@ -128,8 +123,5 @@ public class DuoService {
                 .filter(info -> QueueType.fromRiotQueueType(info.getQueueType()) == queueType)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("해당 큐 타입에 대한 랭크 정보를 찾을 수 없습니다."));
-
-        
- 
     }
 }
