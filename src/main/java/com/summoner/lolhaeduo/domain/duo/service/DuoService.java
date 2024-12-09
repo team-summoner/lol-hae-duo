@@ -6,6 +6,7 @@ import com.summoner.lolhaeduo.client.dto.SummonerResponse;
 import com.summoner.lolhaeduo.client.entity.Version;
 import com.summoner.lolhaeduo.client.repository.VersionRepository;
 import com.summoner.lolhaeduo.client.riot.RiotClient;
+import com.summoner.lolhaeduo.common.dto.AuthMember;
 import com.summoner.lolhaeduo.domain.account.entity.Account;
 import com.summoner.lolhaeduo.domain.account.enums.AccountRegion;
 import com.summoner.lolhaeduo.domain.account.repository.AccountRepository;
@@ -15,6 +16,7 @@ import com.summoner.lolhaeduo.domain.duo.entity.Duo;
 import com.summoner.lolhaeduo.domain.duo.entity.Kda;
 import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
 import com.summoner.lolhaeduo.domain.duo.repository.DuoRepository;
+import com.summoner.lolhaeduo.domain.member.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -50,22 +52,30 @@ public class DuoService {
         List<LeagueEntryResponse> rankInfo = riotClient.extractLeagueInfo(encryptedSummonerId, linkedAccount.getServer());
 
         QueueType queueType = request.getQueueType();
-        LeagueEntryResponse selectedRankInfo = getSelectedRankInfoByQueueType(rankInfo, queueType);
+        LeagueEntryResponse selectedSoloRankInfo = getSelectedRankInfoByQueueType(rankInfo, QueueType.SOLO);
+        LeagueEntryResponse selectedFlexRankInfo = getSelectedRankInfoByQueueType(rankInfo, QueueType.FLEX);
 
         Duo duo;
+        int winRate = 0;
         switch (queueType) {
-//            case QUICK -> duo = Duo.quickOf(
-//                    request.getQueueType(),
-//                    request.getPrimaryRole(),
-//                    request.getPrimaryChamp(),
-//                    request.getSecondaryRole(),
-//                    request.getSecondaryChamp(),
-//                    targetRoles,
-//                    request.getMemo(),
-//                    request.getMic(),
-//                    memberId,
-//                    linkedAccountId
-//            );
+            case QUICK -> duo = Duo.quickOf(
+
+                    request.getQueueType(),
+                    request.getPrimaryRole(),
+                    request.getPrimaryChamp(),
+                    request.getSecondaryRole(),
+                    request.getSecondaryChamp(),
+                    request.getTargetRole(),
+                    request.getMemo(),
+                    request.getMic(),
+                    selectedSoloRankInfo.getTier(),
+                    selectedSoloRankInfo.getRank(),
+                    wins,
+                    losses,
+                    profileIconUrl,
+                    memberId,
+                    linkedAccountId
+            );
             case SOLO -> {
                 duo = Duo.soloOf(
                         request.getQueueType(),
@@ -73,14 +83,15 @@ public class DuoService {
                         request.getTargetRole(),
                         request.getMemo(),
                         request.getMic(),
-                        selectedRankInfo.getTier(),
-                        selectedRankInfo.getRank(),
-                        selectedRankInfo.getWins(),
-                        selectedRankInfo.getLosses(),
+                        selectedSoloRankInfo.getTier(),
+                        selectedSoloRankInfo.getRank(),
+                        selectedSoloRankInfo.getWins(),
+                        selectedSoloRankInfo.getLosses(),
                         profileIconUrl,
                         memberId,
                         linkedAccountId
                 );
+                calculateRankWinRate(selectedSoloRankInfo.getWins(), selectedSoloRankInfo.getLosses());
             }
 
             case FLEX -> {
@@ -91,51 +102,25 @@ public class DuoService {
                         request.getTargetRole(),
                         request.getMemo(),
                         request.getMic(),
-                        selectedRankInfo.getTier(),
-                        selectedRankInfo.getRank(),
-                        selectedRankInfo.getWins(),
-                        selectedRankInfo.getLosses(),
+                        selectedFlexRankInfo.getTier(),
+                        selectedFlexRankInfo.getRank(),
+                        selectedFlexRankInfo.getWins(),
+                        selectedFlexRankInfo.getLosses(),
                         profileIconUrl,
                         memberId,
                         linkedAccountId
                 );
+                calculateRankWinRate(selectedFlexRankInfo.getWins(), selectedFlexRankInfo.getLosses());
             }
 
             default -> throw new IllegalArgumentException("Queue Type 잘못됨");
         }
         duoRepository.save(duo);
-        int winRate = duo.calculateWinRate(selectedRankInfo.getWins(), selectedRankInfo.getLosses());
+
         return new DuoCreateResponse(duo, winRate);
     }
 
-    private String getProfileIconUrl(Account linkedAccount) {
 
-        SummonerResponse summonerResponse = riotClient.extractSummonerInfo(
-                linkedAccount.getAccountDetail().getPuuid(),
-                linkedAccount.getServer()
-        );
-        int accountProfileIconId = summonerResponse.getProfileIconId();
-
-        String latestVersion = getLatestVersion();
-
-        return String.format(
-                "https://ddragon.leagueoflegends.com/cdn/%s/img/profileicon/%d.png",
-                latestVersion, accountProfileIconId
-        );
-    }
-
-    // todo 게임버전 api로 변경하면 로직 변경해야함
-    private String getLatestVersion() {
-        Version latestVersion = versionRepository.findLatestVersion();
-        return latestVersion.getVersionNumber();
-    }
-
-    private LeagueEntryResponse getSelectedRankInfoByQueueType(List<LeagueEntryResponse> rankInfo, QueueType queueType) {
-        return rankInfo.stream()
-                .filter(info -> QueueType.fromRiotQueueType(info.getQueueType()) == queueType)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("해당 큐 타입에 대한 랭크 정보를 찾을 수 없습니다."));
-    }
 
     @Transactional
     public DuoUpdateResponse update(Long memberId, Long duoId, DuoUpdateRequest updateRequest) {
@@ -178,6 +163,28 @@ public class DuoService {
         return DuoUpdateResponse.from(duo);
     }
 
+    public void deleteDuoById(Long duoId, AuthMember authMember) {
+        Duo existDuo = duoRepository.findById(duoId).orElseThrow(
+                () -> new IllegalArgumentException("듀오가 존재하지 않습니다.")
+        );
+
+        if (!authMember.getMemberId().equals(existDuo.getMemberId())) {
+            if (!authMember.getRole().equals(UserRole.ADMIN)) {
+                throw new IllegalArgumentException("삭제 권한이 없습니다.");
+            }
+        }
+        // Soft Delete 처리: 삭제 시간 기록
+        existDuo.delete();
+        duoRepository.save(existDuo);  // 엔티티를 업데이트하여 삭제 시간 저장
+
+        duoRepository.deleteById(duoId);
+    }
+
+
+    // ===================================================================
+    // ===================================================================
+    // ===================================================================
+
     public RecordResponse callQuickRecord(Account duoLinkedAccount) {
         int wins = 0;
         int losses = 0;
@@ -188,7 +195,7 @@ public class DuoService {
 
         long startTime = calculateStartTime(daysBefore);    // 빠른 대전일 때, 조회할 기간의 시작 시점; 한 달(30일) 전
         Long endTime = null;        // 빠른 대전일 때, 조회할 기간의 종료 시점 (현재라 설정 안 함)
-        Integer queue = 490;        // 빠른 대전의 specific queue id; 490
+        int queue = 490;        // 빠른 대전의 specific queue id; 490
         String type = "normal";     // 빠른 대전의 type; normal
 
         int start = 0;              // 시작 인덱스
@@ -271,27 +278,104 @@ public class DuoService {
         return epochTime;
     }
 
-    private final DuoRepository duoRepository;
 
-    public DuoService(DuoRepository duoRepository) { // 생성자를 통해 주입
-        this.duoRepository = duoRepository;
+
+    // ===================================================================
+
+    public int calculateRankWinRate(int wins, int losses) {
+        if (wins + losses == 0) {
+            return 0;
+        }
+        return ((wins * 100) / (wins + losses));
+    }
+    // 승률 계산하는 메서드
+    public int calculateWinRate() {
+        return 0;
     }
 
-    public void deleteDuoById(Long duoId, AuthMember authMember) {
-        Duo existDuo = duoRepository.findById(duoId).orElseThrow(
-                () -> new IllegalArgumentException("듀오가 존재하지 않습니다.")
+    // ===================================================================
+    // KDA 계산하는 메서드
+    public BigDecimal calculateKda(Account linkedAccount, int queue) {
+        int kills = 0;
+        int deaths = 0;
+        int assists = 0;
+        int daysBefore = 30;
+
+        long startTime = calculateStartTime(daysBefore);    // 빠른 대전일 때, 조회할 기간의 시작 시점; 한 달(30일) 전
+//        queue = 490;        // 빠른 대전의 specific queue id; 490
+
+        AccountRegion region = linkedAccount.getRegion();
+        String puuid = linkedAccount.getAccountDetail().getPuuid();
+        String summonerName = linkedAccount.getSummonerName();
+        String tagLine = linkedAccount.getTagLine();
+
+        // 한 달간 플레이한 최대 20판의 queue 타입 대전 id
+        List<String> matchIds = riotClient.extractMatchIds(startTime, null, queue, null, 0, 20, region, puuid);
+
+        List<FormattedMatchResponse> matchDetails = new ArrayList<>();
+        for (String matchId : matchIds) {
+            FormattedMatchResponse matchDetail = riotClient.getMatchDetails(matchId, summonerName, tagLine, region);
+
+            // K/D/A
+            kills += matchDetail.getKills();
+            deaths += matchDetail.getDeaths();
+            assists += matchDetail.getAssists();
+
+        }
+        BigDecimal totalKills = BigDecimal.valueOf(kills);
+        BigDecimal totalDeaths = BigDecimal.valueOf(deaths);
+        BigDecimal totalAssists = BigDecimal.valueOf(assists);
+
+        Kda.of(
+                 BigDecimal.valueOf(kills / matchIds.size()),
+                BigDecimal.valueOf(assists / matchIds.size()),
+                BigDecimal.valueOf(deaths / matchIds.size())
         );
 
-        if (!authMember.getMemberId().equals(existDuo.getMemberId())) {
-            if (!authMember.getRole().equals(UserRole.ADMIN)) {
-                throw new IllegalArgumentException("삭제 권한이 없습니다.");
-            }
+        BigDecimal kda;
+        if (totalDeaths.compareTo(BigDecimal.ZERO) == 0) {
+            kda = totalKills.add(totalAssists);
         }
-        // Soft Delete 처리: 삭제 시간 기록
-        existDuo.delete();
-        duoRepository.save(existDuo);  // 엔티티를 업데이트하여 삭제 시간 저장
 
-        duoRepository.deleteById(duoId);
+        kda = totalKills.add(totalAssists)  // kill + assist
+                .divide(totalDeaths, 2, RoundingMode.HALF_UP);  // 나누기
+        return kda;
+    }
+
+    // ===================================================================
+    // 최근 챔피언 계산하는 메서드
+
+
+    // ===================================================================
+    // ===================================================================
+
+    private String getProfileIconUrl(Account linkedAccount) {
+
+        SummonerResponse summonerResponse = riotClient.extractSummonerInfo(
+                linkedAccount.getAccountDetail().getPuuid(),
+                linkedAccount.getServer()
+        );
+        int accountProfileIconId = summonerResponse.getProfileIconId();
+
+        String latestVersion = getLatestVersion();
+
+        return String.format(
+                "https://ddragon.leagueoflegends.com/cdn/%s/img/profileicon/%d.png",
+                latestVersion, accountProfileIconId
+        );
+    }
+
+    // todo 게임버전 api로 변경하면 로직 변경해야함
+    private String getLatestVersion() {
+        Version latestVersion = versionRepository.findLatestVersion();
+        return latestVersion.getVersionNumber();
+    }
+
+    private LeagueEntryResponse getSelectedRankInfoByQueueType(List<LeagueEntryResponse> rankInfo, QueueType queueType) {
+        return rankInfo.stream()
+                .filter(info -> QueueType.fromRiotQueueType(info.getQueueType()) == queueType)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("해당 큐 타입에 대한 랭크 정보를 찾을 수 없습니다."));
     }
 
 
