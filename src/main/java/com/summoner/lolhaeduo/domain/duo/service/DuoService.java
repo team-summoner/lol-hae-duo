@@ -1,6 +1,10 @@
 package com.summoner.lolhaeduo.domain.duo.service;
 
 import com.summoner.lolhaeduo.client.dto.LeagueEntryResponse;
+import com.summoner.lolhaeduo.client.dto.PuuidResponse;
+import com.summoner.lolhaeduo.client.dto.SummonerResponse;
+import com.summoner.lolhaeduo.client.entity.Version;
+import com.summoner.lolhaeduo.client.repository.VersionRepository;
 import com.summoner.lolhaeduo.client.riot.RiotClient;
 import com.summoner.lolhaeduo.domain.account.entity.Account;
 import com.summoner.lolhaeduo.domain.account.repository.AccountRepository;
@@ -20,11 +24,15 @@ public class DuoService {
 
     private final DuoRepository duoRepository;
     private final AccountRepository accountRepository;
+    private final VersionRepository versionRepository;
     private final RiotClient riotClient;
 
     public DuoCreateResponse createDuo(DuoCreateRequest request, Long memberId) {
+
         Account linkedAccount  = accountRepository.findByMemberId(memberId);
         Long linkedAccountId = linkedAccount.getId();
+
+        String profileIconUrl = getProfileIconUrl(linkedAccount);
 
         List<LeagueEntryResponse> rankInfo = getRankInfo(linkedAccount);
 
@@ -56,12 +64,12 @@ public class DuoService {
                         selectedRankInfo.getRank(),
                         selectedRankInfo.getWins(),
                         selectedRankInfo.getLosses(),
+                        profileIconUrl,
                         memberId,
                         linkedAccountId
                 );
 
             }
-
             case FLEX -> {
                 duo = Duo.flexOf(
                         request.getQueueType(),
@@ -73,17 +81,46 @@ public class DuoService {
                         selectedRankInfo.getRank(),
                         selectedRankInfo.getWins(),
                         selectedRankInfo.getLosses(),
+                        profileIconUrl,
                         memberId,
                         linkedAccountId
                 );
             }
-
             default -> throw new IllegalArgumentException("Queue Type 잘못됨");
         }
         duoRepository.save(duo);
         int winRate = duo.calculateWinRate(selectedRankInfo.getWins(), selectedRankInfo.getLosses());
-
         return new DuoCreateResponse(duo, winRate);
+    }
+
+    private String getProfileIconUrl(Account linkedAccount) {
+        PuuidResponse puuidResponse = riotClient.extractPuuid(
+                linkedAccount.getSummonerName(),
+                linkedAccount.getTagLine(),
+                linkedAccount.getRegion()
+        );
+        SummonerResponse summonerResponse = riotClient.extractSummonerInfo(
+                puuidResponse.getPuuid(),
+                linkedAccount.getServer()
+        );
+        int accountProfileIconId = summonerResponse.getProfileIconId();
+
+        String latestVersion = getLatestVersion();
+
+        return String.format(
+                "https://ddragon.leagueoflegends.com/cdn/%s/img/profileicon/%d.png",
+                latestVersion, accountProfileIconId
+        );
+    }
+
+    private String getLatestVersion() {
+        Version latestVersion = versionRepository.findLatestVersion();
+        if (latestVersion == null) {
+            throw new IllegalArgumentException("최신버전이 없습니다");
+        }
+        return latestVersion.getVersionNumber();
+        // latestVersion != null일때,  return latestVersion.getVersionNumber();
+        // 아닐땐  String latestVersionFromApi = DataDragonScheduler.fetchLatestVersion();의 값을 리턴?
     }
 
     private static LeagueEntryResponse getSelectedRankInfo(List<LeagueEntryResponse> rankInfo, QueueType queueType) {
