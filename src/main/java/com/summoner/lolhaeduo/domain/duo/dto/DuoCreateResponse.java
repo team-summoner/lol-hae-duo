@@ -17,10 +17,16 @@ public class DuoCreateResponse {
     private Lane targetRole;
     private String memo;
     private Boolean mic;
+    private String tier;
+    private String ranks;
+    private int wins;
+    private int losses;
+    private String profileIcon;
     private Long memberId;
     private Long accountId;
+    private int winRate;
 
-    public DuoCreateResponse(Duo duo) {
+    public DuoCreateResponse(Duo duo, int winRate) {
         this.id = duo.getId();
         this.queueType = duo.getQueueType();
         this.primaryRole = duo.getPrimaryRole();
@@ -30,7 +36,13 @@ public class DuoCreateResponse {
         this.targetRole = duo.getTargetRole();
         this.memo = duo.getMemo();
         this.mic = duo.getMic();
+        this.tier = duo.getTier();
+        this.ranks = duo.getRanks();
+        this.wins = duo.getWins();
+        this.losses = duo.getLosses();
+        this.profileIcon = duo.getProfileIcon();
         this.memberId = duo.getMemberId();
         this.accountId = duo.getAccountId();
+        this.winRate = winRate;
     }
 }

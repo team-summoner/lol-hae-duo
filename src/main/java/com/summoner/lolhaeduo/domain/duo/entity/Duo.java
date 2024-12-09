@@ -58,7 +58,7 @@ public class Duo extends Timestamped {
 
     private String favoritesChamp;
 
-    private Long profileIcon;
+    private String profileIcon;
 
     @Embedded
     private Kda kda;
@@ -72,7 +72,8 @@ public class Duo extends Timestamped {
     private LocalDateTime deletedAt;
 
     private Duo(QueueType queueType, Lane primaryRole, String primaryChamp, Lane secondaryRole, String secondaryChamp,
-                Lane targetRole, String memo, Boolean mic, String tier, String ranks, int wins, int losses, Long memberId, Long accountId) {
+                Lane targetRole, String memo, Boolean mic, String tier, String ranks, int wins, int losses, String profileIcon, Long memberId, Long accountId) {
+
         this.queueType = queueType;
         this.primaryRole = primaryRole;
         this.primaryChamp = primaryChamp;
@@ -85,6 +86,7 @@ public class Duo extends Timestamped {
         this.ranks = ranks;
         this.wins = wins;
         this.losses = losses;
+        this.profileIcon = profileIcon;
         this.memberId = memberId;
         this.accountId = accountId;
     }
@@ -96,6 +98,7 @@ public class Duo extends Timestamped {
                               String memo, Boolean mic,
                               String tier, String rank,
                               int wins, int losses, // 최근 20게임 승패
+                              String profileIcon,
                               Long memberId, Long accountId) {
         return new Duo(
                 queueType,
@@ -110,6 +113,7 @@ public class Duo extends Timestamped {
                 rank,
                 wins,
                 losses,
+                profileIcon,
                 memberId,
                 accountId
         );
@@ -120,6 +124,7 @@ public class Duo extends Timestamped {
                              String memo, Boolean mic,
                              String tier, String rank,
                              int wins, int losses,  // League API 에서 호출한 시즌 승률 (솔로 랭크 = 개인 게임)
+                             String profileIcon,
                              Long memberId, Long accountId) {
         return new Duo(
                 queueType,
@@ -134,6 +139,7 @@ public class Duo extends Timestamped {
                 rank,
                 wins,
                 losses,
+                profileIcon,
                 memberId,
                 accountId
         );
@@ -145,6 +151,7 @@ public class Duo extends Timestamped {
                              String memo, Boolean mic,
                              String tier, String rank,
                              int wins, int losses,  // League API 에서 호출한 시즌 승률 (자유 랭크 = 팀 게임)
+                             String profileIcon,
                              Long memberId, Long accountId) {
         return new Duo(
                 queueType,
@@ -159,6 +166,7 @@ public class Duo extends Timestamped {
                 rank,
                 wins,
                 losses,
+                profileIcon,
                 memberId,
                 accountId
         );
@@ -181,5 +189,12 @@ public class Duo extends Timestamped {
         this.targetRole = targetRole;
         this.memo = memo;
         this.mic = mic;
+    }
+
+    public int calculateWinRate(int wins, int losses) {
+        if (wins + losses == 0) {
+            return 0;
+        }
+        return ((wins * 100) / (wins + losses));
     }
 }
