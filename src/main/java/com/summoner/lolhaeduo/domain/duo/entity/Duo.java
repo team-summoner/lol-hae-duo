@@ -96,7 +96,7 @@ public class Duo extends Timestamped {
                               Lane secondaryRole, String secondaryChamp,
                               Lane targetRole,
                               String memo, Boolean mic,
-                              String tier, String rank,
+                              String tier, String ranks,
                               int wins, int losses, // 최근 20게임 승패
                               String profileIcon,
                               Long memberId, Long accountId) {
@@ -110,7 +110,7 @@ public class Duo extends Timestamped {
                 memo,
                 mic,
                 tier,
-                rank,
+                ranks,
                 wins,
                 losses,
                 profileIcon,
@@ -122,7 +122,7 @@ public class Duo extends Timestamped {
     public static Duo soloOf(QueueType queueType,
                              Lane primaryRole, Lane targetRole,
                              String memo, Boolean mic,
-                             String tier, String rank,
+                             String tier, String ranks,
                              int wins, int losses,  // League API 에서 호출한 시즌 승률 (솔로 랭크 = 개인 게임)
                              String profileIcon,
                              Long memberId, Long accountId) {
@@ -136,7 +136,7 @@ public class Duo extends Timestamped {
                 memo,
                 mic,
                 tier,
-                rank,
+                ranks,
                 wins,
                 losses,
                 profileIcon,
@@ -145,11 +145,10 @@ public class Duo extends Timestamped {
         );
     }
 
-
     public static Duo flexOf(QueueType queueType,
                              Lane primaryRole, Lane targetRole,
                              String memo, Boolean mic,
-                             String tier, String rank,
+                             String tier, String ranks,
                              int wins, int losses,  // League API 에서 호출한 시즌 승률 (자유 랭크 = 팀 게임)
                              String profileIcon,
                              Long memberId, Long accountId) {
@@ -163,7 +162,7 @@ public class Duo extends Timestamped {
                 memo,
                 mic,
                 tier,
-                rank,
+                ranks,
                 wins,
                 losses,
                 profileIcon,
@@ -176,10 +175,16 @@ public class Duo extends Timestamped {
     // 듀오 찾기 수정이 진행되면, 변경될 수 있는 부분입니다.
     */
     public void update(QueueType queueType,
-                       Lane primaryRole, String primaryChamp,
-                       Lane secondaryRole, String secondaryChamp,
+                       Lane primaryRole,
+                       String primaryChamp,
+                       Lane secondaryRole,
+                       String secondaryChamp,
                        Lane targetRole,
-                       String memo, Boolean mic
+                       String memo,
+                       Boolean mic,
+                       int wins,
+                       int losses,
+                       Kda kda
     ) {
         this.queueType = queueType;
         this.primaryRole = primaryRole;
@@ -189,6 +194,10 @@ public class Duo extends Timestamped {
         this.targetRole = targetRole;
         this.memo = memo;
         this.mic = mic;
+        this.wins = wins;
+        this.losses = losses;
+//        this.favoritesChamp = favoritesChamp;
+        this.kda = kda;
     }
 
     public int calculateWinRate(int wins, int losses) {
