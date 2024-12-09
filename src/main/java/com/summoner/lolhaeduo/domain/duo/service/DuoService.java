@@ -1,10 +1,12 @@
 package com.summoner.lolhaeduo.domain.duo.service;
 
 import com.summoner.lolhaeduo.client.dto.LeagueEntryResponse;
+
 import com.summoner.lolhaeduo.client.dto.PuuidResponse;
 import com.summoner.lolhaeduo.client.dto.SummonerResponse;
 import com.summoner.lolhaeduo.client.entity.Version;
 import com.summoner.lolhaeduo.client.repository.VersionRepository;
+
 import com.summoner.lolhaeduo.client.riot.RiotClient;
 import com.summoner.lolhaeduo.domain.account.entity.Account;
 import com.summoner.lolhaeduo.domain.account.repository.AccountRepository;
@@ -70,7 +72,9 @@ public class DuoService {
                 );
 
             }
+
             case FLEX -> {
+              
                 duo = Duo.flexOf(
                         request.getQueueType(),
                         request.getPrimaryRole(),
@@ -124,5 +128,8 @@ public class DuoService {
                 .filter(info -> QueueType.fromRiotQueueType(info.getQueueType()) == queueType)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("해당 큐 타입에 대한 랭크 정보를 찾을 수 없습니다."));
+
+        
+ 
     }
 }

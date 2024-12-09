@@ -73,6 +73,7 @@ public class Duo extends Timestamped {
 
     private Duo(QueueType queueType, Lane primaryRole, String primaryChamp, Lane secondaryRole, String secondaryChamp,
                 Lane targetRole, String memo, Boolean mic, String tier, String ranks, int wins, int losses, String profileIcon, Long memberId, Long accountId) {
+
         this.queueType = queueType;
         this.primaryRole = primaryRole;
         this.primaryChamp = primaryChamp;
