@@ -118,11 +118,6 @@ public class Duo extends Timestamped {
                 accountId
         );
     }
-    //Soft Delete 메서드
-    public void delete(){
-        this.deletedAt = LocalDateTime.now();
-    }
-
     public static Duo soloOf(QueueType queueType,
                              Lane primaryRole, Lane targetRole,
                              String memo, Boolean mic,
@@ -178,6 +173,7 @@ public class Duo extends Timestamped {
     /*
     // 듀오 찾기 수정이 진행되면, 변경될 수 있는 부분입니다.
     */
+
     public void update(QueueType queueType,
                        Lane primaryRole,
                        String primaryChamp,
@@ -204,10 +200,10 @@ public class Duo extends Timestamped {
         this.kda = kda;
     }
 
-    public int calculateWinRate(int wins, int losses) {
-        if (wins + losses == 0) {
-            return 0;
-        }
-        return ((wins * 100) / (wins + losses));
+    //Soft Delete 메서드
+    public void delete(){
+        this.deletedAt = LocalDateTime.now();
     }
+
+
 }
