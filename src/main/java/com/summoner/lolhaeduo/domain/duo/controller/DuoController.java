@@ -4,15 +4,19 @@ import com.summoner.lolhaeduo.common.annotation.Auth;
 import com.summoner.lolhaeduo.common.dto.AuthMember;
 import com.summoner.lolhaeduo.domain.duo.dto.DuoCreateRequest;
 import com.summoner.lolhaeduo.domain.duo.dto.DuoCreateResponse;
+import com.summoner.lolhaeduo.domain.duo.dto.DuoUpdateRequest;
+import com.summoner.lolhaeduo.domain.duo.dto.DuoUpdateResponse;
 import com.summoner.lolhaeduo.domain.duo.service.DuoService;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
+@RequestMapping("/duo")
 @RequiredArgsConstructor
 public class DuoController {
 
@@ -25,5 +29,20 @@ public class DuoController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(duoCreateResponse);
+    }
+
+    @PutMapping("/{duoId}")
+    public ResponseEntity<DuoUpdateResponse> update(
+            @Auth AuthMember authMember,
+            @PathVariable Long duoId,
+            @Valid @RequestBody DuoUpdateRequest duoUpdateRequest) {
+        if (!duoUpdateRequest.isFlexQueueTypeValid()) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        Long memberId = authMember.getMemberId();
+        DuoUpdateResponse response = duoService.update(memberId, duoId, duoUpdateRequest);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
     }
 }
