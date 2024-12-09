@@ -118,6 +118,10 @@ public class Duo extends Timestamped {
                 accountId
         );
     }
+    //Soft Delete 메서드
+    public void delete(){
+        this.deletedAt = LocalDateTime.now();
+    }
 
     public static Duo soloOf(QueueType queueType,
                              Lane primaryRole, Lane targetRole,
