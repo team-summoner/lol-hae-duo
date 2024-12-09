@@ -100,7 +100,7 @@ public class DuoService {
     private String getProfileIconUrl(Account linkedAccount) {
 
         SummonerResponse summonerResponse = riotClient.extractSummonerInfo(
-                linkedAccount.getAccountDetail().getEncryptedSummonerId(),
+                linkedAccount.getAccountDetail().getPuuid(),
                 linkedAccount.getServer()
         );
         int accountProfileIconId = summonerResponse.getProfileIconId();
