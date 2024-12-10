@@ -7,6 +7,7 @@ import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 public class DuoUpdateResponse {
@@ -23,7 +24,7 @@ public class DuoUpdateResponse {
     private String ranks;               // 신청한 유저의 랭크
     private int wins;
     private int losses;
-    private String favoritesChamp;
+    private List<String> favoritesChamp;
     private String profileIcon;
     private Kda kda;
     private Long memberId;              // 신청한 유저의 ID
@@ -33,7 +34,7 @@ public class DuoUpdateResponse {
 
     public DuoUpdateResponse(Long duoId, QueueType queueType, Lane primaryRole, String primaryChamp,
                              Lane secondaryRole, String secondaryChamp, Lane targetRole, String memo, Boolean mic,
-                             String tier, String ranks, int wins, int losses, String favoritesChamp, String profileIcon,
+                             String tier, String ranks, int wins, int losses, List<String> favoritesChamp, String profileIcon,
                              Kda kda, Long memberId, Long accountId, LocalDateTime createAt, LocalDateTime modifiedAt) {
         this.duoId = duoId;
         this.queueType = queueType;
