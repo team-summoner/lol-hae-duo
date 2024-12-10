@@ -23,7 +23,7 @@ public class DuoCreateResponse {
     private String tier;
     private String ranks;
     private Kda kda;
-    private List<String> favoritesChamp;
+    private List<Long> favoriteId;
     private int wins;
     private int losses;
     private String profileIcon;
@@ -44,7 +44,7 @@ public class DuoCreateResponse {
         this.tier = duo.getTier();
         this.ranks = duo.getRanks();
         this.kda = duo.getKda();
-        this.favoritesChamp = duo.getFavoritesChamp();
+        this.favoriteId = duo.getFavoriteId();
         this.wins = duo.getWins();
         this.losses = duo.getLosses();
         this.profileIcon = duo.getProfileIcon();
