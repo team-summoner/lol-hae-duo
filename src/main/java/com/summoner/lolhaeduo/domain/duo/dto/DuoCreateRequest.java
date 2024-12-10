@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class DuoCreateRequest {
 
+    private Long accountId;
     private QueueType queueType;
     private Lane primaryRole;
     private String primaryChamp;
