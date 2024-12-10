@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DuoRepository extends JpaRepository<Duo, Long> {
+public interface DuoRepository extends JpaRepository<Duo, Long> , DuoCustomRepository {
 }
 

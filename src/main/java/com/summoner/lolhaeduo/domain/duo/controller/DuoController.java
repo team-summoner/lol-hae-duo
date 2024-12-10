@@ -2,13 +2,15 @@ package com.summoner.lolhaeduo.domain.duo.controller;
 
 import com.summoner.lolhaeduo.common.annotation.Auth;
 import com.summoner.lolhaeduo.common.dto.AuthMember;
-import com.summoner.lolhaeduo.domain.duo.dto.DuoCreateRequest;
-import com.summoner.lolhaeduo.domain.duo.dto.DuoCreateResponse;
-import com.summoner.lolhaeduo.domain.duo.dto.DuoUpdateRequest;
-import com.summoner.lolhaeduo.domain.duo.dto.DuoUpdateResponse;
+import com.summoner.lolhaeduo.domain.duo.dto.*;
+import com.summoner.lolhaeduo.domain.duo.enums.Lane;
+import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
 import com.summoner.lolhaeduo.domain.duo.service.DuoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,19 @@ import org.springframework.web.server.ResponseStatusException;
 public class DuoController {
 
     private final DuoService duoService;
+    @GetMapping()
+    public ResponseEntity<Page<DuoListResponse>> getDuoList(
+        @RequestParam(required = false) QueueType queueType,
+        @RequestParam(required = false) Lane lane,
+        @RequestParam(required = false) String tier,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "20") int size
+
+    ){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<DuoListResponse> duoList = duoService.getPagedDuoList(queueType, lane, tier,pageable);
+        return ResponseEntity.ok(duoList);
+    }
 
     @PostMapping("")
     public ResponseEntity<DuoCreateResponse> createDuo(@RequestBody DuoCreateRequest createRequest, @Auth AuthMember authMember) {
