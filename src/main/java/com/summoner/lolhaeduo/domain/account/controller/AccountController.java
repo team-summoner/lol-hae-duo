@@ -6,6 +6,7 @@ import com.summoner.lolhaeduo.domain.account.dto.LinkAccountRequest;
 import com.summoner.lolhaeduo.domain.account.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,6 @@ public class AccountController {
     public ResponseEntity<Void> linkAccount(@RequestBody @Valid LinkAccountRequest request, @Auth AuthMember authMember) {
         Long memberId = authMember.getMemberId();
         accountService.linkAccount(request, memberId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
