@@ -25,10 +25,13 @@ public class Favorite {
 
     private int playCount;
 
-    public Favorite(Long accountId, QueueType queueType, String key, Integer value) {
+    private int winCount;
+
+    public Favorite(Long accountId, QueueType queueType, String key, int playCount, int winCount) {
         this.accountId = accountId;
         this.queueType = queueType;
         this.championName = key;
-        this.playCount = value;
+        this.playCount = playCount;
+        this.winCount = winCount;
     }
 }
