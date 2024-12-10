@@ -21,7 +21,7 @@ public class DuoController {
 
     private final DuoService duoService;
 
-    @PostMapping("/duo")
+    @PostMapping("")
     public ResponseEntity<DuoCreateResponse> createDuo(@RequestBody DuoCreateRequest createRequest, @Auth AuthMember authMember) {
 
         DuoCreateResponse duoCreateResponse = duoService.createDuo(createRequest,authMember.getMemberId());
