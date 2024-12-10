@@ -52,6 +52,6 @@ public class DuoController {
         duoService.deleteDuoById(duoId, authMember);
 
         // HTTP 상태 코드 204 반환
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
