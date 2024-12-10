@@ -6,6 +6,8 @@ import com.summoner.lolhaeduo.domain.duo.enums.Lane;
 import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class DuoCreateResponse {
 
@@ -21,7 +23,7 @@ public class DuoCreateResponse {
     private String tier;
     private String ranks;
     private Kda kda;
-    private String favoritesChamp;
+    private List<String> favoritesChamp;
     private int wins;
     private int losses;
     private String profileIcon;
