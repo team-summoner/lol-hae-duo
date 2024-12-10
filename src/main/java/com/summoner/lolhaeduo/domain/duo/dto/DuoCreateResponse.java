@@ -1,6 +1,7 @@
 package com.summoner.lolhaeduo.domain.duo.dto;
 
 import com.summoner.lolhaeduo.domain.duo.entity.Duo;
+import com.summoner.lolhaeduo.domain.duo.entity.Kda;
 import com.summoner.lolhaeduo.domain.duo.enums.Lane;
 import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
 import lombok.Getter;
@@ -19,6 +20,8 @@ public class DuoCreateResponse {
     private Boolean mic;
     private String tier;
     private String ranks;
+    private Kda kda;
+    private String favoritesChamp;
     private int wins;
     private int losses;
     private String profileIcon;
@@ -38,6 +41,8 @@ public class DuoCreateResponse {
         this.mic = duo.getMic();
         this.tier = duo.getTier();
         this.ranks = duo.getRanks();
+        this.kda = duo.getKda();
+        this.favoritesChamp = duo.getFavoritesChamp();
         this.wins = duo.getWins();
         this.losses = duo.getLosses();
         this.profileIcon = duo.getProfileIcon();
