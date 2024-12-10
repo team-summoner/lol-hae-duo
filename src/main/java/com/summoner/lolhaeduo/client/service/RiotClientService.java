@@ -1,7 +1,8 @@
 package com.summoner.lolhaeduo.client.service;
 
 import com.summoner.lolhaeduo.client.dto.*;
-import com.summoner.lolhaeduo.client.entity.Version;
+import com.summoner.lolhaeduo.client.entity.Favorite;
+import com.summoner.lolhaeduo.client.repository.FavoriteRepository;
 import com.summoner.lolhaeduo.client.repository.VersionRepository;
 import com.summoner.lolhaeduo.client.riot.RiotClient;
 import com.summoner.lolhaeduo.common.util.TimeUtil;
@@ -11,6 +12,7 @@ import com.summoner.lolhaeduo.domain.account.enums.AccountServer;
 import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ public class RiotClientService {
     private final RiotClient riotClient;
     private final TimeUtil timeUtil;
     private final VersionRepository versionRepository;
+    private final FavoriteRepository favoriteRepository;
 
     public RankStats getRankGameStats(Account account, AccountServer server) {
         List<LeagueEntryResponse> leagueInfoList = riotClient.extractLeagueInfo(account.getAccountDetail().getEncryptedSummonerId(), server);
@@ -98,7 +101,8 @@ public class RiotClientService {
         return matchIds;
     }
 
-    public MatchStats getMatchStats(List<String> matchIds, QueueType queueType, String summonerName, String tagLine, AccountRegion region) {
+    @Transactional
+    public MatchStats getMatchStats(Long accountId, List<String> matchIds, QueueType queueType, String summonerName, String tagLine, AccountRegion region) {
         // 초기화
         int totalKills = 0, totalDeath = 0, totalAssists = 0;
         int winCount = 0;
@@ -112,7 +116,8 @@ public class RiotClientService {
             FormattedMatchResponse matchResponse = riotClient.getMatchDetails(matchId, summonerName, tagLine, region);
 
             if (matchResponse != null) {
-                champCount.put(matchResponse.getChampionName(), champCount.getOrDefault(matchResponse.getChampionName(), 0) + 1);
+                String championName = matchResponse.getChampionName();
+                champCount.put(championName, champCount.getOrDefault(championName, 0) + 1);
 
                 // 일반 게임일 경우 승리 카운트
                 if (queueType == QueueType.QUICK && matchResponse.isWin()) {
@@ -139,14 +144,16 @@ public class RiotClientService {
         double averageDeath = !limitedMatchIds.isEmpty() ? (double) totalDeath / limitedMatchIds.size() : 0;
         double averageAssist = !limitedMatchIds.isEmpty() ? (double) totalAssists / limitedMatchIds.size() : 0;
 
-        // 챔피언 플레이 횟수 기준으로 정렬
-        List<ChampionPlayCount> mostPlayedChamps = champCount.entrySet().stream()
-                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
-                .limit(3)
-                .map(entry -> new ChampionPlayCount(entry.getKey(), entry.getValue()))
+        // 동일한 accountId와 queueType에 대한 중복 데이터 발생 방지 : 항상 최신 데이터로 덮어씌움
+        favoriteRepository.deleteByAccountIdAndQueueType(accountId, queueType);
+
+        List<Favorite> favorites = champCount.entrySet().stream()
+                .map(entry -> new Favorite(accountId, queueType, entry.getKey(), entry.getValue()))
                 .toList();
 
-        return new MatchStats(winRate, averageKill, averageDeath, averageAssist, mostPlayedChamps, matchIds.size());
+        favoriteRepository.saveAll(favorites);
+
+        return new MatchStats(winRate, averageKill, averageDeath, averageAssist, matchIds.size());
     }
 
     public String getProfileIconUrl(Account linkedAccount) {
@@ -157,16 +164,11 @@ public class RiotClientService {
         );
         int accountProfileIconId = summonerResponse.getProfileIconId();
 
-        String latestVersion = getLatestVersion();
+        String latestVersion = versionRepository.findLatestVersion().getVersionNumber();
 
         return String.format(
                 "https://ddragon.leagueoflegends.com/cdn/%s/img/profileicon/%d.png",
                 latestVersion, accountProfileIconId
         );
-    }
-
-    public String getLatestVersion() {
-        Version latestVersion = versionRepository.findLatestVersion();
-        return latestVersion.getVersionNumber();
     }
 }
