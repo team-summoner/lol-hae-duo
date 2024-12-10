@@ -2,10 +2,11 @@ package com.summoner.lolhaeduo.domain.duo.entity;
 
 import jakarta.persistence.Embeddable;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
-@Data
+@Getter
 @NoArgsConstructor
 public class Kda {
 
