@@ -92,7 +92,7 @@ public class DuoService {
                     request.getSecondaryRole(), request.getSecondaryChamp(),
                     request.getTargetRole(), request.getMemo(),
                     request.getMic(),
-                    tier, ranks, wins, losses, profileIconUrl, kda, favoritesChamp.toString(),
+                    tier, ranks, wins, losses, profileIconUrl, kda, favoritesChamp,
                     linkedAccount.getMemberId(), linkedAccount.getId()
             );
 
@@ -127,7 +127,7 @@ public class DuoService {
                     QueueType.SOLO,
                     request.getPrimaryRole(), request.getTargetRole(),
                     request.getMemo(), request.getMic(),
-                    tier, ranks, wins, losses, profileIconUrl, kda, favoritesChamp.toString(),
+                    tier, ranks, wins, losses, profileIconUrl, kda, favoritesChamp,
                     linkedAccount.getMemberId(), linkedAccount.getId()
             );
 
@@ -162,7 +162,7 @@ public class DuoService {
                     QueueType.FLEX,
                     request.getPrimaryRole(), request.getTargetRole(),
                     request.getMemo(), request.getMic(),
-                    tier, ranks, wins, losses, profileIconUrl, kda, favoritesChamp.toString(),
+                    tier, ranks, wins, losses, profileIconUrl, kda, favoritesChamp,
                     linkedAccount.getMemberId(), linkedAccount.getId()
             );
         }
@@ -291,7 +291,7 @@ public class DuoService {
                     wins,
                     losses,
                     kda,
-                    favoritesChamp.toString()
+                    favoritesChamp
             );
         } else {
             duo.update(
