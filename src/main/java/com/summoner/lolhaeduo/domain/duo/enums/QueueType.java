@@ -1,28 +1,26 @@
 package com.summoner.lolhaeduo.domain.duo.enums;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum QueueType {
 	// QUICK 은 어떤 값으로 넘겨주는 찾아야함
-	QUICK("QUICK"),
-	SOLO("RANKED_SOLO_5x5"),
-	FLEX("RANKED_FLEX_SR");
+	QUICK("QUICK", 490),
+	SOLO("RANKED_SOLO_5x5", 420),
+	FLEX("RANKED_FLEX_SR", 440);
 
-	private final String riotQueueType;
+	private final String queueType;
+	private final Integer queueId;
 
-	QueueType(String riotQueueType) {
-		this.riotQueueType = riotQueueType;
-	}
-
-	public String getRiotQueueType() {
-		return riotQueueType;
-	}
-
-	public static QueueType fromRiotQueueType(String riotQueueType) {
+	public static QueueType fromRiotQueueType(String queueType) {
 		for (QueueType type : values()) {
-			if (type.riotQueueType.equalsIgnoreCase(riotQueueType)) {
+			if (type.queueType.equalsIgnoreCase(queueType)) {
 				return type;
 			}
 		}
-			throw new IllegalArgumentException("Unknown QueueType: " + riotQueueType);
+			throw new IllegalArgumentException("Unknown QueueType: " + queueType);
 		}
 	}
 
