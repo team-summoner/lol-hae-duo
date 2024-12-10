@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -56,7 +57,8 @@ public class Duo extends Timestamped {
     @Column(nullable = false)
     private int losses;
 
-    private String favoritesChamp;
+    @Transient
+    private List<String> favoritesChamp;
 
     private String profileIcon;
 
@@ -72,7 +74,7 @@ public class Duo extends Timestamped {
     private LocalDateTime deletedAt;
 
     private Duo(QueueType queueType, Lane primaryRole, String primaryChamp, Lane secondaryRole, String secondaryChamp,
-                Lane targetRole, String memo, Boolean mic, String tier, String ranks, int wins, int losses, String profileIcon, Kda kda, String favoritesChamp, Long memberId, Long accountId) {
+                Lane targetRole, String memo, Boolean mic, String tier, String ranks, int wins, int losses, String profileIcon, Kda kda, List<String> favoritesChamp, Long memberId, Long accountId) {
 
         this.queueType = queueType;
         this.primaryRole = primaryRole;
@@ -100,7 +102,7 @@ public class Duo extends Timestamped {
                               String memo, Boolean mic,
                               String tier, String ranks,
                               int wins, int losses, // 최근 20게임 승패
-                              String profileIcon, Kda kda, String favoritesChamp,
+                              String profileIcon, Kda kda, List<String> favoritesChamp,
                               Long memberId, Long accountId) {
         return new Duo(
                 queueType,
@@ -127,7 +129,7 @@ public class Duo extends Timestamped {
                              String memo, Boolean mic,
                              String tier, String ranks,
                              int wins, int losses,  // League API 에서 호출한 시즌 승률 (솔로 랭크 = 개인 게임)
-                             String profileIcon, Kda kda, String favoritesChamp,
+                             String profileIcon, Kda kda, List<String> favoritesChamp,
                              Long memberId, Long accountId) {
         return new Duo(
                 queueType,
@@ -155,7 +157,7 @@ public class Duo extends Timestamped {
                              String memo, Boolean mic,
                              String tier, String ranks,
                              int wins, int losses,  // League API 에서 호출한 시즌 승률 (자유 랭크 = 팀 게임)
-                             String profileIcon, Kda kda, String favoritesChamp,
+                             String profileIcon, Kda kda, List<String> favoritesChamp,
                              Long memberId, Long accountId) {
         return new Duo(
                 queueType,
@@ -195,7 +197,7 @@ public class Duo extends Timestamped {
                        int wins,
                        int losses,
                        Kda kda,
-                       String favoritesChamp
+                       List<String> favoritesChamp
     ) {
         this.queueType = queueType;
         this.primaryRole = primaryRole;
