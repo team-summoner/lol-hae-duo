@@ -56,7 +56,7 @@ class DuoServiceTest {
     void test2() {
         //given
         Long memberId = 1L;
-        Duo duo = Duo.rankOf(QueueType.SOLO, Lane.BOTTOM, Lane.SUPPORT, null, false, "123", "123", 1, 1, memberId, 2L);
+        Duo duo = Duo.soloOf(QueueType.SOLO, Lane.BOTTOM, Lane.SUPPORT, null, false, "123", "123", 1, 1, memberId, 2L);
         duoRepository.save(duo);
 
         AuthMember authMember = new AuthMember(2L,"user1", UserRole.ADMIN);
