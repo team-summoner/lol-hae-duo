@@ -24,62 +24,38 @@ public class DuoUpdateResponse {
     private String ranks;               // 신청한 유저의 랭크
     private int wins;
     private int losses;
-    private List<String> favoritesChamp;
+    private List<Long> favoritesChamp;
     private String profileIcon;
     private Kda kda;
     private Long memberId;              // 신청한 유저의 ID
     private Long accountId;             // 신청한 유저의 연동 계정 ID
-    private LocalDateTime createAt;     // 듀오 찾기 생성 일자
+    private LocalDateTime createdAt;     // 듀오 찾기 생성 일자
     private LocalDateTime modifiedAt;   // 듀오 찾기 수정 일자
 
-    public DuoUpdateResponse(Long duoId, QueueType queueType, Lane primaryRole, String primaryChamp,
-                             Lane secondaryRole, String secondaryChamp, Lane targetRole, String memo, Boolean mic,
-                             String tier, String ranks, int wins, int losses, List<String> favoritesChamp, String profileIcon,
-                             Kda kda, Long memberId, Long accountId, LocalDateTime createAt, LocalDateTime modifiedAt) {
-        this.duoId = duoId;
-        this.queueType = queueType;
-        this.primaryRole = primaryRole;
-        this.primaryChamp = primaryChamp;
-        this.secondaryRole = secondaryRole;
-        this.secondaryChamp = secondaryChamp;
-        this.targetRole = targetRole;
-        this.memo = memo;
-        this.mic = mic;
-        this.tier = tier;
-        this.ranks = ranks;
-        this.wins = wins;
-        this.losses = losses;
-        this.favoritesChamp = favoritesChamp;
-        this.profileIcon = profileIcon;
-        this.kda = kda;
-        this.memberId = memberId;
-        this.accountId = accountId;
-        this.createAt = createAt;
-        this.modifiedAt = modifiedAt;
+    private DuoUpdateResponse(Duo duo) {
+        this.duoId = duo.getId();
+        this.queueType = duo.getQueueType();
+        this.primaryRole = duo.getPrimaryRole();
+        this.primaryChamp = duo.getPrimaryChamp();
+        this.secondaryRole = duo.getSecondaryRole();
+        this.secondaryChamp = duo.getSecondaryChamp();
+        this.targetRole = duo.getTargetRole();
+        this.memo = duo.getMemo();
+        this.mic = duo.getMic();
+        this.tier = duo.getTier();
+        this.ranks = duo.getRanks();
+        this.wins = duo.getWins();
+        this.losses = duo.getLosses();
+        this.favoritesChamp = duo.getFavoriteId();
+        this.profileIcon = duo.getProfileIcon();
+        this.kda = duo.getKda();
+        this.memberId = duo.getMemberId();
+        this.accountId = duo.getAccountId();
+        this.createdAt = duo.getCreatedAt();
+        this.modifiedAt = duo.getModifiedAt();
     }
 
-    public static DuoUpdateResponse from(Duo duo) {
-        return new DuoUpdateResponse(
-                duo.getId(),
-                duo.getQueueType(),
-                duo.getPrimaryRole(),
-                duo.getPrimaryChamp(),
-                duo.getSecondaryRole(),
-                duo.getSecondaryChamp(),
-                duo.getTargetRole(),
-                duo.getMemo(),
-                duo.getMic(),
-                duo.getTier(),
-                duo.getRanks(),
-                duo.getWins(),
-                duo.getLosses(),
-                duo.getFavoritesChamp(),
-                duo.getProfileIcon(),
-                duo.getKda(),
-                duo.getMemberId(),
-                duo.getAccountId(),
-                duo.getCreatedAt(),
-                duo.getModifiedAt()
-        );
+    public static DuoUpdateResponse of(Duo duo) {
+        return new DuoUpdateResponse(duo);
     }
 }
