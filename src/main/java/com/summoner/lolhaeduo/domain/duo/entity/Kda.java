@@ -4,24 +4,22 @@ import jakarta.persistence.Embeddable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Embeddable
 @Data
 @NoArgsConstructor
 public class Kda {
 
-    private BigDecimal averageKills;
-    private BigDecimal averageAssists;
-    private BigDecimal averageDeaths;
+    private double averageKills;
+    private double averageAssists;
+    private double averageDeaths;
 
-    private Kda(BigDecimal averageKills, BigDecimal averageAssists, BigDecimal averageDeaths) {
+    private Kda(double averageKills, double averageAssists, double averageDeaths) {
         this.averageKills = averageKills;
         this.averageAssists = averageAssists;
         this.averageDeaths = averageDeaths;
     }
 
-    public static Kda of(BigDecimal averageKills, BigDecimal averageAssists, BigDecimal averageDeaths) {
+    public static Kda of(double averageKills, double averageAssists, double averageDeaths) {
         return new Kda(averageKills, averageAssists, averageDeaths);
     }
 }
