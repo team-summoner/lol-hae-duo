@@ -2,6 +2,8 @@ package com.summoner.lolhaeduo.domain.duo.service;
 
 import com.summoner.lolhaeduo.client.dto.MatchStats;
 import com.summoner.lolhaeduo.client.dto.RankStats;
+import com.summoner.lolhaeduo.client.entity.Favorite;
+import com.summoner.lolhaeduo.client.repository.FavoriteRepository;
 import com.summoner.lolhaeduo.client.service.RiotClientService;
 import com.summoner.lolhaeduo.common.dto.AuthMember;
 import com.summoner.lolhaeduo.domain.account.entity.Account;
@@ -20,6 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -28,25 +32,33 @@ public class DuoService {
     private final DuoRepository duoRepository;
     private final AccountRepository accountRepository;
     private final RiotClientService riotClientService;
+    private final FavoriteRepository favoriteRepository;
 
     @Transactional
     public DuoCreateResponse createDuo(DuoCreateRequest request, Long memberId) {
 
-        request.validate();
-        Account linkedAccount = accountRepository.findByMemberId(memberId);
+        Account linkedAccount = accountRepository.findById(request.getAccountId()).orElseThrow(
+                () -> new IllegalArgumentException("Not Found Account")
+        );
+
+        if (linkedAccount.getMemberId() != memberId) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
 
         // profileIcon
         String profileIconUrl = riotClientService.getProfileIconUrl(linkedAccount);
 
         // 승리, 패배 정보 및 승률 계산
         int wins = 0, losses = 0, winRate = 0;
-        String tier = "", ranks = "", favoritesChamp = "";
+        String tier = "", ranks = "";
+        List<String> favoritesChamp;
         Kda kda = Kda.of(0.0, 0.0, 0.0);
 
         Duo duo = null;
 
         if (request.getQueueType() == QueueType.QUICK) {
             MatchStats matchStats = riotClientService.getMatchStats(
+                    linkedAccount.getId(),
                     riotClientService.getMatchIds(QueueType.QUICK, 20, linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
                     QueueType.QUICK,
                     linkedAccount.getSummonerName(),
@@ -69,7 +81,10 @@ public class DuoService {
                     matchStats.getAverageAssist()
             );
 
-            favoritesChamp = matchStats.getMostPlayedChamps().isEmpty() ? "" : matchStats.getMostPlayedChamps().get(0).getChampionName();
+            favoritesChamp = favoriteRepository.findTop3ByAccountIdAndQueueTypeOrderByPlayCountDesc(linkedAccount.getId(), QueueType.QUICK)
+                    .stream()
+                    .map(Favorite::getChampionName)
+                    .toList();
 
             duo = Duo.quickOf(
                     QueueType.QUICK,
@@ -77,7 +92,7 @@ public class DuoService {
                     request.getSecondaryRole(), request.getSecondaryChamp(),
                     request.getTargetRole(), request.getMemo(),
                     request.getMic(),
-                    tier, ranks, wins, losses, profileIconUrl, kda, favoritesChamp,
+                    tier, ranks, wins, losses, profileIconUrl, kda, favoritesChamp.toString(),
                     linkedAccount.getMemberId(), linkedAccount.getId()
             );
 
@@ -89,6 +104,7 @@ public class DuoService {
             ranks = rankStats.getSoloRank();
 
             MatchStats matchStats = riotClientService.getMatchStats(
+                    linkedAccount.getId(),
                     riotClientService.getMatchIds(QueueType.SOLO, rankStats.getSoloTotalGames(), linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
                     QueueType.SOLO,
                     linkedAccount.getSummonerName(),
@@ -102,13 +118,16 @@ public class DuoService {
                     matchStats.getAverageAssist()
             );
 
-            favoritesChamp = matchStats.getMostPlayedChamps().isEmpty() ? "" : matchStats.getMostPlayedChamps().get(0).getChampionName();
+            favoritesChamp = favoriteRepository.findTop3ByAccountIdAndQueueTypeOrderByPlayCountDesc(linkedAccount.getId(), QueueType.SOLO)
+                    .stream()
+                    .map(Favorite::getChampionName)
+                    .toList();
 
             duo = Duo.soloOf(
                     QueueType.SOLO,
                     request.getPrimaryRole(), request.getTargetRole(),
                     request.getMemo(), request.getMic(),
-                    tier, ranks, wins, losses, profileIconUrl, kda, favoritesChamp,
+                    tier, ranks, wins, losses, profileIconUrl, kda, favoritesChamp.toString(),
                     linkedAccount.getMemberId(), linkedAccount.getId()
             );
 
@@ -120,6 +139,7 @@ public class DuoService {
             ranks = rankStats.getFlexRank();
 
             MatchStats matchStats = riotClientService.getMatchStats(
+                    linkedAccount.getId(),
                     riotClientService.getMatchIds(QueueType.FLEX, rankStats.getFlexTotalGames(), linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
                     QueueType.FLEX,
                     linkedAccount.getSummonerName(),
@@ -133,19 +153,24 @@ public class DuoService {
                     matchStats.getAverageAssist()
             );
 
-            favoritesChamp = matchStats.getMostPlayedChamps().isEmpty() ? "" : matchStats.getMostPlayedChamps().get(0).getChampionName();
+            favoritesChamp = favoriteRepository.findTop3ByAccountIdAndQueueTypeOrderByPlayCountDesc(linkedAccount.getId(), QueueType.FLEX)
+                    .stream()
+                    .map(Favorite::getChampionName)
+                    .toList();
 
             duo = Duo.flexOf(
                     QueueType.FLEX,
                     request.getPrimaryRole(), request.getTargetRole(),
                     request.getMemo(), request.getMic(),
-                    tier, ranks, wins, losses, profileIconUrl, kda, favoritesChamp,
+                    tier, ranks, wins, losses, profileIconUrl, kda, favoritesChamp.toString(),
                     linkedAccount.getMemberId(), linkedAccount.getId()
             );
         }
 
         Duo savedDuo = duoRepository.save(duo);
-        winRate = (wins + losses) > 0 ? (int) ((double) wins / (wins + losses) * 100) : 0;
+        if (wins + losses > 0) {
+            winRate = (int) ((double) wins / (wins + losses) * 100);
+        }
 
         return new DuoCreateResponse(savedDuo, winRate);
     }
@@ -163,12 +188,14 @@ public class DuoService {
         Account linkedAccount = accountRepository.findById(duo.getAccountId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 롤 계정입니다."));
 
         int wins = 0, losses = 0, winRate = 0;
-        String tier = "", ranks = "", favoritesChamp = "";
+        String tier = "", ranks = "";
+        List<String> favoritesChamp = List.of();
         Kda kda = Kda.of(0.0, 0.0, 0.0);
 
         if (!duo.getQueueType().equals(request.getQueueType())) {
             if (request.getQueueType() == QueueType.QUICK) {
                 MatchStats matchStats = riotClientService.getMatchStats(
+                        linkedAccount.getId(),
                         riotClientService.getMatchIds(QueueType.QUICK, 20, linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
                         QueueType.QUICK,
                         linkedAccount.getSummonerName(),
@@ -190,7 +217,10 @@ public class DuoService {
                         matchStats.getAverageAssist()
                 );
 
-                favoritesChamp = matchStats.getMostPlayedChamps().isEmpty() ? "" : matchStats.getMostPlayedChamps().get(0).getChampionName();
+                favoritesChamp = favoriteRepository.findTop3ByAccountIdAndQueueTypeOrderByPlayCountDesc(linkedAccount.getId(), QueueType.QUICK)
+                        .stream()
+                        .map(Favorite::getChampionName)
+                        .toList();
 
             } else if (request.getQueueType() == QueueType.SOLO) {
                 RankStats rankStats = riotClientService.getRankGameStats(linkedAccount, linkedAccount.getServer());
@@ -200,6 +230,7 @@ public class DuoService {
                 ranks = rankStats.getSoloRank();
 
                 MatchStats matchStats = riotClientService.getMatchStats(
+                        linkedAccount.getId(),
                         riotClientService.getMatchIds(QueueType.SOLO, rankStats.getSoloTotalGames(), linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
                         QueueType.SOLO,
                         linkedAccount.getSummonerName(),
@@ -213,7 +244,10 @@ public class DuoService {
                         matchStats.getAverageAssist()
                 );
 
-                favoritesChamp = matchStats.getMostPlayedChamps().isEmpty() ? "" : matchStats.getMostPlayedChamps().get(0).getChampionName();
+                favoritesChamp = favoriteRepository.findTop3ByAccountIdAndQueueTypeOrderByPlayCountDesc(linkedAccount.getId(), QueueType.SOLO)
+                        .stream()
+                        .map(Favorite::getChampionName)
+                        .toList();
 
             } else if (request.getQueueType() == QueueType.FLEX) {
                 RankStats rankStats = riotClientService.getRankGameStats(linkedAccount, linkedAccount.getServer());
@@ -223,6 +257,7 @@ public class DuoService {
                 ranks = rankStats.getFlexRank();
 
                 MatchStats matchStats = riotClientService.getMatchStats(
+                        linkedAccount.getId(),
                         riotClientService.getMatchIds(QueueType.FLEX, rankStats.getFlexTotalGames(), linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
                         QueueType.FLEX,
                         linkedAccount.getSummonerName(),
@@ -236,7 +271,10 @@ public class DuoService {
                         matchStats.getAverageAssist()
                 );
 
-                favoritesChamp = matchStats.getMostPlayedChamps().isEmpty() ? "" : matchStats.getMostPlayedChamps().get(0).getChampionName();
+                favoritesChamp = favoriteRepository.findTop3ByAccountIdAndQueueTypeOrderByPlayCountDesc(linkedAccount.getId(), QueueType.FLEX)
+                        .stream()
+                        .map(Favorite::getChampionName)
+                        .toList();
             }
 
             duo.update(
@@ -253,7 +291,7 @@ public class DuoService {
                     wins,
                     losses,
                     kda,
-                    favoritesChamp
+                    favoritesChamp.toString()
             );
         } else {
             duo.update(
