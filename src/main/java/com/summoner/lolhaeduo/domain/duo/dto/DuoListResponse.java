@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 public class DuoListResponse {
   private Long id;
-  private Long profileIconId;
+  private String profileIconId;
   private String summonerName;
   private String tagLine;
   private String tier;
