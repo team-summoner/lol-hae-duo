@@ -8,16 +8,17 @@ import com.summoner.lolhaeduo.client.service.RiotClientService;
 import com.summoner.lolhaeduo.common.dto.AuthMember;
 import com.summoner.lolhaeduo.domain.account.entity.Account;
 import com.summoner.lolhaeduo.domain.account.repository.AccountRepository;
-import com.summoner.lolhaeduo.domain.duo.dto.DuoCreateRequest;
-import com.summoner.lolhaeduo.domain.duo.dto.DuoCreateResponse;
-import com.summoner.lolhaeduo.domain.duo.dto.DuoUpdateRequest;
-import com.summoner.lolhaeduo.domain.duo.dto.DuoUpdateResponse;
+import com.summoner.lolhaeduo.domain.duo.dto.*;
 import com.summoner.lolhaeduo.domain.duo.entity.Duo;
 import com.summoner.lolhaeduo.domain.duo.entity.Kda;
+import com.summoner.lolhaeduo.domain.duo.enums.Lane;
+import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
 import com.summoner.lolhaeduo.domain.duo.repository.DuoRepository;
 import com.summoner.lolhaeduo.domain.member.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,28 @@ public class DuoService {
     private final RiotClientService riotClientService;
     private final FavoriteRepository favoriteRepository;
 
+
+    // 페이징 처리된 듀오 리스트 조회
+    public Page<DuoListResponse> getPagedDuoList(QueueType queueType, Lane lane, String tier, Pageable pageable) {
+        // 1. 조건에 맞는 듀오 리스트를 페이징 처리해서 가져오기
+        Page<Duo> duoPage = duoRepository.findDuosByCondition(queueType, lane, tier, pageable);
+
+        // 2. 가져온 듀오 리스트를 map()을 사용하여 변환
+        return duoPage.map(duo -> {
+            // Account 정보 조회
+            Account account = accountRepository.findById(duo.getAccountId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 계정을 찾을 수 없습니다. accountId=" + duo.getAccountId()));
+
+
+            // DuoListResponse 생성
+            return new DuoListResponse(
+                duo,
+                account.getSummonerName(),
+                account.getTagLine()
+
+            );
+        });
+    }
     @Transactional
     public DuoCreateResponse createDuo(DuoCreateRequest request, Long memberId) {
 
