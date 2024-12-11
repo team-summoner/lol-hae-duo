@@ -10,16 +10,18 @@ import lombok.NoArgsConstructor;
 public class AccountDetail {
 
     private String puuid;
+    private int profileIconId;
     private String encryptedAccountId;
     private String encryptedSummonerId;
 
-    private AccountDetail(String puuid, String encryptedAccountId, String encryptedSummonerId) {
+    private AccountDetail(String puuid, int profileIconId, String encryptedAccountId, String encryptedSummonerId) {
         this.puuid = puuid;
+        this.profileIconId = profileIconId;
         this.encryptedAccountId = encryptedAccountId;
         this.encryptedSummonerId = encryptedSummonerId;
     }
 
-    public static AccountDetail of(String puuid, String encryptedAccountId, String encryptedSummonerId) {
-        return new AccountDetail(puuid, encryptedAccountId, encryptedSummonerId);
+    public static AccountDetail of(String puuid, int profileIconId, String encryptedAccountId, String encryptedSummonerId) {
+        return new AccountDetail(puuid, profileIconId, encryptedAccountId, encryptedSummonerId);
     }
 }
