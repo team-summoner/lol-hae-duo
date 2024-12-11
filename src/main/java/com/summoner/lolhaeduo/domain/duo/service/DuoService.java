@@ -6,6 +6,7 @@ import com.summoner.lolhaeduo.client.entity.Favorite;
 import com.summoner.lolhaeduo.client.repository.FavoriteRepository;
 import com.summoner.lolhaeduo.client.service.RiotClientService;
 import com.summoner.lolhaeduo.common.dto.AuthMember;
+import com.summoner.lolhaeduo.common.dto.PageResponse;
 import com.summoner.lolhaeduo.domain.account.entity.Account;
 import com.summoner.lolhaeduo.domain.account.repository.AccountRepository;
 import com.summoner.lolhaeduo.domain.duo.dto.*;
@@ -18,6 +19,7 @@ import com.summoner.lolhaeduo.domain.member.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,25 +40,28 @@ public class DuoService {
 
 
     // 페이징 처리된 듀오 리스트 조회
-    public Page<DuoListResponse> getPagedDuoList(QueueType queueType, Lane lane, String tier, Pageable pageable) {
+    public PageResponse<DuoListResponse> getPagedDuoList(QueueType queueType, Lane lane, String tier, int page, int size) {
         // 1. 조건에 맞는 듀오 리스트를 페이징 처리해서 가져오기
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<Duo> duoPage = duoRepository.findDuosByCondition(queueType, lane, tier, pageable);
 
         // 2. 가져온 듀오 리스트를 map()을 사용하여 변환
-        return duoPage.map(duo -> {
+        Page<DuoListResponse> response = duoPage.map(duo -> {
             // Account 정보 조회
             Account account = accountRepository.findById(duo.getAccountId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 계정을 찾을 수 없습니다. accountId=" + duo.getAccountId()));
 
 
             // DuoListResponse 생성
-            return new DuoListResponse(
+            return DuoListResponse.of(
                 duo,
                 account.getSummonerName(),
                 account.getTagLine()
 
             );
         });
+
+        return  PageResponse.of(response.toList(), pageable , response.getTotalPages());
     }
     @Transactional
     public DuoCreateResponse createDuo(DuoCreateRequest request, Long memberId) {

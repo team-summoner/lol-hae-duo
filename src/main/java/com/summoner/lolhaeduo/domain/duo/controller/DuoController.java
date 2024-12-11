@@ -2,6 +2,7 @@ package com.summoner.lolhaeduo.domain.duo.controller;
 
 import com.summoner.lolhaeduo.common.annotation.Auth;
 import com.summoner.lolhaeduo.common.dto.AuthMember;
+import com.summoner.lolhaeduo.common.dto.PageResponse;
 import com.summoner.lolhaeduo.domain.duo.dto.*;
 import com.summoner.lolhaeduo.domain.duo.enums.Lane;
 import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
@@ -23,17 +24,16 @@ public class DuoController {
 
     private final DuoService duoService;
     @GetMapping()
-    public ResponseEntity<Page<DuoListResponse>> getDuoList(
+    public ResponseEntity<PageResponse<DuoListResponse>> getDuoList(
         @RequestParam(required = false) QueueType queueType,
         @RequestParam(required = false) Lane lane,
         @RequestParam(required = false) String tier,
-        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "20") int size
 
     ){
-        Pageable pageable = PageRequest.of(page, size);
-        Page<DuoListResponse> duoList = duoService.getPagedDuoList(queueType, lane, tier,pageable);
-        return ResponseEntity.ok(duoList);
+        PageResponse<DuoListResponse> duoList = duoService.getPagedDuoList(queueType, lane, tier,page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(duoList);
     }
 
     @PostMapping("")
