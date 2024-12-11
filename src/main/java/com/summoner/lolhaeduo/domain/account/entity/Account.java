@@ -4,7 +4,6 @@ import com.summoner.lolhaeduo.common.entity.Timestamped;
 import com.summoner.lolhaeduo.domain.account.enums.AccountRegion;
 import com.summoner.lolhaeduo.domain.account.enums.AccountServer;
 import com.summoner.lolhaeduo.domain.account.enums.AccountType;
-
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -52,7 +51,7 @@ public class Account extends Timestamped {
 	@Column(nullable = false)
 	private Long memberId;
 
-	private Account(String username, String password, AccountType accountType, String summonerName, String tagLine, AccountServer server, AccountDetail accountDetail, AccountGameData accountGameData, Long memberId) {
+	private Account(String username, String password, AccountType accountType, String summonerName, String tagLine, AccountServer server, AccountDetail accountDetail, Long memberId) {
 		this.username = username;
 		this.password = password;
 		this.accountType = accountType;
@@ -61,11 +60,15 @@ public class Account extends Timestamped {
 		this.server = server;
 		this.region = server.getRegion();
 		this.accountDetail = accountDetail;
-		this.accountGameData = accountGameData;
 		this.memberId = memberId;
 	}
 
-	public static Account of(String username, String password, AccountType accountType, String summonerName, String tagLine, AccountServer server, AccountDetail accountDetail, AccountGameData accountGameData, Long memberId) {
-		return new Account(username, password, accountType, summonerName, tagLine, server, accountDetail, accountGameData, memberId);
+	public static Account of(String username, String password, AccountType accountType, String summonerName, String tagLine, AccountServer server, AccountDetail accountDetail,  Long memberId) {
+		return new Account(username, password, accountType, summonerName, tagLine, server, accountDetail, memberId);
+	}
+
+	// AccountGameData 연동하는 메서드
+	public void linkAccountGameData(AccountGameData accountGameData) {
+		this.accountGameData = accountGameData;
 	}
 }
