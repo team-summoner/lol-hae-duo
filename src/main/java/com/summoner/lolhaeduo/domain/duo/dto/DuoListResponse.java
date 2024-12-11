@@ -26,7 +26,7 @@ public class DuoListResponse {
   private String relativeTime;
 
 
-  public DuoListResponse(Duo duo, String summonerName, String tagLine) {
+  private DuoListResponse(Duo duo, String summonerName, String tagLine) {
     this.id = duo.getId();
     this.profileIconId = duo.getProfileIcon();
     this.summonerName = summonerName;
@@ -43,6 +43,11 @@ public class DuoListResponse {
     this.accountId = duo.getAccountId();
     this.relativeTime = calculateRelativeTime(duo.getCreatedAt());
   }
+
+  public static DuoListResponse of(Duo duo, String summonerName, String tagLine){
+    return  new DuoListResponse(duo, summonerName, tagLine);
+  }
+
   public String calculateRelativeTime(LocalDateTime createdAt) {
     LocalDateTime now = LocalDateTime.now();
     Duration duration = Duration.between(createdAt, now);
