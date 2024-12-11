@@ -26,4 +26,16 @@ public class SoloRankData {
     private int totalGames;
 
     private Kda kda;
+
+    private SoloRankData(String tier, String ranks, int wins, int totalGames, Kda kda) {
+        this.tier = tier;
+        this.ranks = ranks;
+        this.wins = wins;
+        this.totalGames = totalGames;
+        this.kda = kda;
+    }
+
+    public static SoloRankData of(String tier, String ranks, int wins, int totalGames, Kda kda) {
+        return new SoloRankData(tier, ranks, wins, totalGames, kda);
+    }
 }
