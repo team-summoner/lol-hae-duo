@@ -22,4 +22,14 @@ public class QuickGameData {
     private int totalGames;
 
     private Kda kda;
+
+    private QuickGameData(int wins, int totalGames, Kda kda) {
+        this.wins = wins;
+        this.totalGames = totalGames;
+        this.kda = kda;
+    }
+
+    public static QuickGameData of(int wins, int totalGames, Kda kda) {
+        return new QuickGameData(wins, totalGames, kda);
+    }
 }
