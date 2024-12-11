@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 
 @Entity
 @Getter
+@Table(name = "favorite",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"accountId", "queueType", "championName"}))
 @RequiredArgsConstructor
 public class Favorite {
 
@@ -23,9 +25,11 @@ public class Favorite {
     @Column(nullable = false)
     private String championName;
 
-    private int playCount;
+    @Column(nullable = false)
+    private int playCount = 0;
 
-    private int winCount;
+    @Column(nullable = false)
+    private int winCount = 0;
 
     public Favorite(Long accountId, QueueType queueType, String key, int playCount, int winCount) {
         this.accountId = accountId;
