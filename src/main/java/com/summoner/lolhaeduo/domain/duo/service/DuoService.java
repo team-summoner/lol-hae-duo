@@ -5,6 +5,7 @@ import com.summoner.lolhaeduo.client.dto.RankStats;
 import com.summoner.lolhaeduo.client.entity.Favorite;
 import com.summoner.lolhaeduo.client.repository.FavoriteRepository;
 import com.summoner.lolhaeduo.client.service.RiotClientService;
+import com.summoner.lolhaeduo.client.service.RiotDataProvider;
 import com.summoner.lolhaeduo.common.dto.AuthMember;
 import com.summoner.lolhaeduo.common.dto.PageResponse;
 import com.summoner.lolhaeduo.domain.account.entity.Account;
@@ -35,7 +36,7 @@ public class DuoService {
 
     private final DuoRepository duoRepository;
     private final AccountRepository accountRepository;
-    private final RiotClientService riotClientService;
+    private final RiotDataProvider riotDataProvider;
     private final FavoriteRepository favoriteRepository;
 
 
@@ -75,7 +76,7 @@ public class DuoService {
         }
 
         // profileIcon
-        String profileIconUrl = riotClientService.getProfileIconUrl(linkedAccount);
+        String profileIconUrl = riotDataProvider.getProfileIconUrl(linkedAccount);
 
         // 승리, 패배 정보 및 승률 계산
         int wins = 0, losses = 0, winRate = 0;
@@ -86,9 +87,9 @@ public class DuoService {
         Duo duo = null;
 
         if (request.getQueueType() == QUICK) {
-            MatchStats matchStats = riotClientService.getMatchStats(
+            MatchStats matchStats = riotDataProvider.getMatchStats(
                     linkedAccount.getId(),
-                    riotClientService.getMatchIds(QUICK, 20, linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
+                    riotDataProvider.getMatchIds(QUICK, 20, linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
                     QUICK,
                     linkedAccount.getSummonerName(),
                     linkedAccount.getTagLine(),
@@ -100,7 +101,7 @@ public class DuoService {
             losses = totalGames - wins;
 
             // 솔로랭크 기준 티어, 랭크 가져오기
-            RankStats rankStats = riotClientService.getRankGameStats(linkedAccount, linkedAccount.getServer());
+            RankStats rankStats = riotDataProvider.getRankGameStats(linkedAccount, linkedAccount.getServer());
             tier = rankStats.getSoloTier();
             ranks = rankStats.getSoloRank();
 
@@ -127,15 +128,15 @@ public class DuoService {
 
         }
         if (request.getQueueType() == SOLO) {
-            RankStats rankStats = riotClientService.getRankGameStats(linkedAccount, linkedAccount.getServer());
+            RankStats rankStats = riotDataProvider.getRankGameStats(linkedAccount, linkedAccount.getServer());
             wins = rankStats.getSoloWins();
             losses = rankStats.getSoloLosses();
             tier = rankStats.getSoloTier();
             ranks = rankStats.getSoloRank();
 
-            MatchStats matchStats = riotClientService.getMatchStats(
+            MatchStats matchStats = riotDataProvider.getMatchStats(
                     linkedAccount.getId(),
-                    riotClientService.getMatchIds(SOLO, rankStats.getSoloTotalGames(), linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
+                    riotDataProvider.getMatchIds(SOLO, rankStats.getSoloTotalGames(), linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
                     SOLO,
                     linkedAccount.getSummonerName(),
                     linkedAccount.getTagLine(),
@@ -163,15 +164,15 @@ public class DuoService {
 
         }
         if (request.getQueueType() == FLEX) {
-            RankStats rankStats = riotClientService.getRankGameStats(linkedAccount, linkedAccount.getServer());
+            RankStats rankStats = riotDataProvider.getRankGameStats(linkedAccount, linkedAccount.getServer());
             wins = rankStats.getFlexWins();
             losses = rankStats.getFlexLosses();
             tier = rankStats.getFlexTier();
             ranks = rankStats.getFlexRank();
 
-            MatchStats matchStats = riotClientService.getMatchStats(
+            MatchStats matchStats = riotDataProvider.getMatchStats(
                     linkedAccount.getId(),
-                    riotClientService.getMatchIds(FLEX, rankStats.getFlexTotalGames(), linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
+                    riotDataProvider.getMatchIds(FLEX, rankStats.getFlexTotalGames(), linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
                     FLEX,
                     linkedAccount.getSummonerName(),
                     linkedAccount.getTagLine(),
@@ -242,9 +243,9 @@ public class DuoService {
             );
         } else {
             if (request.getQueueType() == QUICK) {
-                MatchStats matchStats = riotClientService.getMatchStats(
+                MatchStats matchStats = riotDataProvider.getMatchStats(
                         linkedAccount.getId(),
-                        riotClientService.getMatchIds(QUICK, 20, linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
+                        riotDataProvider.getMatchIds(QUICK, 20, linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
                         QUICK,
                         linkedAccount.getSummonerName(),
                         linkedAccount.getTagLine(),
@@ -255,7 +256,7 @@ public class DuoService {
                 wins = (int) ((matchStats.getWinRate() / 100) * totalGames);
                 losses = totalGames - wins;
 
-                RankStats rankStats = riotClientService.getRankGameStats(linkedAccount, linkedAccount.getServer());
+                RankStats rankStats = riotDataProvider.getRankGameStats(linkedAccount, linkedAccount.getServer());
                 tier = rankStats.getSoloTier();
                 ranks = rankStats.getSoloRank();
 
@@ -272,15 +273,15 @@ public class DuoService {
 
             }
             if (request.getQueueType() == SOLO) {
-                RankStats rankStats = riotClientService.getRankGameStats(linkedAccount, linkedAccount.getServer());
+                RankStats rankStats = riotDataProvider.getRankGameStats(linkedAccount, linkedAccount.getServer());
                 wins = rankStats.getSoloWins();
                 losses = rankStats.getSoloLosses();
                 tier = rankStats.getSoloTier();
                 ranks = rankStats.getSoloRank();
 
-                MatchStats matchStats = riotClientService.getMatchStats(
+                MatchStats matchStats = riotDataProvider.getMatchStats(
                         linkedAccount.getId(),
-                        riotClientService.getMatchIds(SOLO, rankStats.getSoloTotalGames(), linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
+                        riotDataProvider.getMatchIds(SOLO, rankStats.getSoloTotalGames(), linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
                         SOLO,
                         linkedAccount.getSummonerName(),
                         linkedAccount.getTagLine(),
@@ -300,15 +301,15 @@ public class DuoService {
 
             }
             if (request.getQueueType() == FLEX) {
-                RankStats rankStats = riotClientService.getRankGameStats(linkedAccount, linkedAccount.getServer());
+                RankStats rankStats = riotDataProvider.getRankGameStats(linkedAccount, linkedAccount.getServer());
                 wins = rankStats.getFlexWins();
                 losses = rankStats.getFlexLosses();
                 tier = rankStats.getFlexTier();
                 ranks = rankStats.getFlexRank();
 
-                MatchStats matchStats = riotClientService.getMatchStats(
+                MatchStats matchStats = riotDataProvider.getMatchStats(
                         linkedAccount.getId(),
-                        riotClientService.getMatchIds(FLEX, rankStats.getFlexTotalGames(), linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
+                        riotDataProvider.getMatchIds(FLEX, rankStats.getFlexTotalGames(), linkedAccount.getRegion(), linkedAccount.getAccountDetail().getPuuid()),
                         FLEX,
                         linkedAccount.getSummonerName(),
                         linkedAccount.getTagLine(),
@@ -362,7 +363,5 @@ public class DuoService {
         // Soft Delete 처리: 삭제 시간 기록
         existDuo.delete();
         duoRepository.save(existDuo);  // 엔티티를 업데이트하여 삭제 시간 저장
-
-        duoRepository.deleteById(duoId);
     }
 }
