@@ -6,7 +6,9 @@ import com.summoner.lolhaeduo.client.repository.FavoriteRepository;
 import com.summoner.lolhaeduo.client.repository.VersionRepository;
 import com.summoner.lolhaeduo.client.riot.RiotClient;
 import com.summoner.lolhaeduo.common.util.TimeUtil;
+import com.summoner.lolhaeduo.domain.account.dto.LinkAccountRequest;
 import com.summoner.lolhaeduo.domain.account.entity.Account;
+import com.summoner.lolhaeduo.domain.account.entity.AccountDetail;
 import com.summoner.lolhaeduo.domain.account.enums.AccountRegion;
 import com.summoner.lolhaeduo.domain.account.enums.AccountServer;
 import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,8 +37,39 @@ public class RiotClientService implements RiotDataProvider {
     private static final int PERIOD_OF_RECENT_MATCH = 30;
     private static final int MAX_METHOD_CALL = 100;
 
-    public RankStats getRankGameStats(Account account, AccountServer server) {
-        List<LeagueEntryResponse> leagueInfoList = riotClient.extractLeagueInfo(account.getAccountDetail().getEncryptedSummonerId(), server);
+    public AccountDetail createAccountDetail(LinkAccountRequest request) {
+        PuuidResponse puuidResponse = riotClient.extractPuuid(
+                request.getSummonerName(),
+                request.getTagLine(),
+                request.getServer().getRegion()
+        );
+
+        SummonerResponse summonerResponse = riotClient.extractSummonerInfo(
+                puuidResponse.getPuuid(),
+                request.getServer()
+        );
+
+        return AccountDetail.of(
+                puuidResponse.getPuuid(),
+                summonerResponse.getAccountId(),
+                summonerResponse.getId()
+        );
+    }
+
+    public String updateProfileIconUrl(Account account) {
+        SummonerResponse response = riotClient.extractSummonerInfo(account.getAccountDetail().getPuuid(), account.getServer());
+        int accountProfileIconId = response.getProfileIconId();
+
+        String latestVersion = versionRepository.findLatestVersion().getVersionNumber();
+
+        return String.format(
+                "https://ddragon.leagueoflegends.com/cdn/%s/img/profileicon/%d.png",
+                latestVersion, accountProfileIconId
+        );
+    }
+
+    public RankStats getRankGameStats(String summonerId, AccountServer server) {
+        List<LeagueEntryResponse> leagueInfoList = riotClient.extractLeagueInfo(summonerId, server);
 
         int soloTotalGames = 0, flexTotalGames = 0;
         int soloWins = 0, soloLosses = 0;
@@ -80,7 +114,7 @@ public class RiotClientService implements RiotDataProvider {
 
         if (queueType == QUICK) {
             // 일반 게임의 경우 최근 30일간의 최대 20판을 조회
-            long startTime = timeUtil.startTimeInEpoch(PERIOD_OF_RECENT_MATCH);
+            long startTime = timeUtil.convertToEpochSeconds(LocalDateTime.now().minusDays(PERIOD_OF_RECENT_MATCH));
             matchIds = riotClient.extractMatchIds(startTime, null, QUICK.getQueueId(), null, 0, NUMBER_OF_RECENT_MATCH, region, puuid);
 
         } else {
@@ -175,19 +209,6 @@ public class RiotClientService implements RiotDataProvider {
         return new MatchStats(
                 winCount, totalGames - winCount, totalGames, queueType,
                 winRate, averageKill, averageDeath, averageAssist
-        );
-    }
-
-    public String getProfileIconUrl(String puuid, AccountServer server) {
-
-        SummonerResponse summonerResponse = riotClient.extractSummonerInfo(puuid, server);
-        int accountProfileIconId = summonerResponse.getProfileIconId();
-
-        String latestVersion = versionRepository.findLatestVersion().getVersionNumber();
-
-        return String.format(
-                "https://ddragon.leagueoflegends.com/cdn/%s/img/profileicon/%d.png",
-                latestVersion, accountProfileIconId
         );
     }
 }
