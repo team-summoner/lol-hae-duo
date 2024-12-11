@@ -13,5 +13,5 @@ public interface RiotDataProvider {
     RankStats getRankGameStats(Account account, AccountServer server);
     List<String> getMatchIds(QueueType queueType, int playCount, AccountRegion region, String puuid);
     MatchStats getMatchStats(Long accountId, List<String> matchIds, QueueType queueType, String summonerName, String tagLine, AccountRegion region);
-    String getProfileIconUrl(Account linkedAccount);
+    String getProfileIconUrl(String puuid, AccountServer server);
 }
