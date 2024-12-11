@@ -178,12 +178,9 @@ public class RiotClientService implements RiotDataProvider {
         );
     }
 
-    public String getProfileIconUrl(Account linkedAccount) {
+    public String getProfileIconUrl(String puuid, AccountServer server) {
 
-        SummonerResponse summonerResponse = riotClient.extractSummonerInfo(
-                linkedAccount.getAccountDetail().getPuuid(),
-                linkedAccount.getServer()
-        );
+        SummonerResponse summonerResponse = riotClient.extractSummonerInfo(puuid, server);
         int accountProfileIconId = summonerResponse.getProfileIconId();
 
         String latestVersion = versionRepository.findLatestVersion().getVersionNumber();
