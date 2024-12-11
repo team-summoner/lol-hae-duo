@@ -18,8 +18,7 @@ public class AccountGameData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private Account account;
+    private String profileIconIdUrl;
 
     @OneToOne(fetch = FetchType.LAZY)
     private QuickGameData quickGameData;
@@ -31,4 +30,24 @@ public class AccountGameData {
     private FlexRankData flexRankData;
 
     private LocalDateTime lastUpdated;
+
+    private AccountGameData(String profileIconIdUrl, QuickGameData quickGameData, SoloRankData soloRankData, FlexRankData flexRankData) {
+        this.profileIconIdUrl = profileIconIdUrl;
+        this.quickGameData = quickGameData;
+        this.soloRankData = soloRankData;
+        this.flexRankData = flexRankData;
+        this.lastUpdated = LocalDateTime.now();
+    }
+
+    public static AccountGameData of(String profileIconIdUrl, QuickGameData quickGameData, SoloRankData soloRankData, FlexRankData flexRankData) {
+        return new AccountGameData(profileIconIdUrl, quickGameData, soloRankData, flexRankData);
+    }
+
+    public void update(String profileIconIdUrl, QuickGameData quickGameData, SoloRankData soloRankData, FlexRankData flexRankData) {
+        this.profileIconIdUrl = profileIconIdUrl;
+        this.quickGameData = quickGameData;
+        this.soloRankData = soloRankData;
+        this.flexRankData = flexRankData;
+        this.lastUpdated = LocalDateTime.now();
+    }
 }
