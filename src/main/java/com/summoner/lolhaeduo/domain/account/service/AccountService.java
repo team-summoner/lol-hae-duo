@@ -3,9 +3,11 @@ package com.summoner.lolhaeduo.domain.account.service;
 import com.summoner.lolhaeduo.client.dto.PuuidResponse;
 import com.summoner.lolhaeduo.client.dto.SummonerResponse;
 import com.summoner.lolhaeduo.client.riot.RiotClient;
+import com.summoner.lolhaeduo.client.service.RiotClientService;
 import com.summoner.lolhaeduo.domain.account.dto.LinkAccountRequest;
 import com.summoner.lolhaeduo.domain.account.entity.Account;
 import com.summoner.lolhaeduo.domain.account.entity.AccountDetail;
+import com.summoner.lolhaeduo.domain.account.entity.AccountGameData;
 import com.summoner.lolhaeduo.domain.account.enums.AccountType;
 import com.summoner.lolhaeduo.domain.account.repository.AccountRepository;
 import com.summoner.lolhaeduo.domain.member.repository.MemberRepository;
@@ -51,9 +53,12 @@ public class AccountService {
 
             AccountDetail newAccountDetail = AccountDetail.of(
                     puuidResponse.getPuuid(),
+                    summonerResponse.getProfileIconId(),
                     summonerResponse.getAccountId(),
                     summonerResponse.getId()
             );
+
+            AccountGameData accountGameData = retrieveData();
 
             Account newAccount = Account.of(
                     request.getAccountId(),
@@ -63,10 +68,16 @@ public class AccountService {
                     request.getTagLine(),
                     request.getServer(),
                     newAccountDetail,
+                    accountGameData,
                     memberId
             );
 
             accountRepository.save(newAccount);
         }
+    }
+
+    // 초기 데이터 불러오기 (추후 비동기 처리로 개발 예정)
+    private AccountGameData retrieveData() {
+        return null;
     }
 }
