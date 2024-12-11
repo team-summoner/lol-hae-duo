@@ -31,6 +31,7 @@ public class DuoCustomRepositoryImpl implements DuoCustomRepository {
         .where(queueTypeCondition, laneCondition, tierCondition)
         .offset(pageable.getOffset())
         .limit(pageable.getPageSize())
+        .orderBy(duo.createdAt.desc())
         .fetch();
 
     // 3. 필터 조건에 맞는 전체 데이터 개수
