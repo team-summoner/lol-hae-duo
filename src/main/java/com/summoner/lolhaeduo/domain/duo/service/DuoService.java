@@ -12,7 +12,6 @@ import com.summoner.lolhaeduo.domain.account.entity.dataStorage.SoloRankData;
 import com.summoner.lolhaeduo.domain.account.repository.AccountRepository;
 import com.summoner.lolhaeduo.domain.duo.dto.*;
 import com.summoner.lolhaeduo.domain.duo.entity.Duo;
-import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
 import com.summoner.lolhaeduo.domain.duo.enums.Lane;
 import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
 import com.summoner.lolhaeduo.domain.duo.repository.DuoRepository;
@@ -26,8 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
-import static com.summoner.lolhaeduo.domain.duo.enums.QueueType.*;
 
 @Slf4j
 @Service
