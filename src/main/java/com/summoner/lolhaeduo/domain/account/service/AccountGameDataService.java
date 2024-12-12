@@ -14,6 +14,7 @@ import com.summoner.lolhaeduo.domain.account.repository.AccountRepository;
 import com.summoner.lolhaeduo.domain.duo.entity.Kda;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,7 @@ public class AccountGameDataService {
 
     private static final int NUMBER_OF_RECENT_MATCH = 20;
 
+    @Async
     @EventListener
     @Transactional
     public void createAccountGameDataEvent(AccountGameDataEvent event) {
@@ -39,7 +41,7 @@ public class AccountGameDataService {
         );
 
         // 랭크 정보 가져오기
-        RankStats rankStats = riotClientService.getRankGameStats(account.getAccountDetail().getEncryptedAccountId(), account.getServer());
+        RankStats rankStats = riotClientService.getRankGameStats(account.getAccountDetail().getEncryptedSummonerId(), account.getServer());
 
         // 매치 아이디 가져오기
         List<String> quickMatchIds = riotClientService.getMatchIds(QUICK, NUMBER_OF_RECENT_MATCH, account.getRegion(), account.getAccountDetail().getPuuid());
