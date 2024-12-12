@@ -52,9 +52,10 @@ public class AccountService {
                     memberId
             );
 
+            accountRepository.save(newAccount);
+
             // 이벤트 발생
             eventPublisher.publishEvent(new AccountGameDataEvent(newAccount.getId()));
-            accountRepository.save(newAccount);
         }
     }
 }
