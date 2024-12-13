@@ -126,6 +126,7 @@ public class RiotClientService implements RiotDataProvider {
                 List<String> partialMatchIds = riotClient.extractMatchIds(
                         null, null,
                         queueType == SOLO ? SOLO.getQueueId() : FLEX.getQueueId(),
+
                         null, totalRetrieved,
                         count, region, puuid
                 );
@@ -145,6 +146,22 @@ public class RiotClientService implements RiotDataProvider {
         }
 
         return matchIds;
+    }
+
+    public List<String> updateMatchIds(QueueType queueType, LocalDateTime lastUpdatedAt, AccountRegion region, String puuid) {
+        if (queueType == QUICK) {
+            // 일반 게임의 경우 플레이했던 20판을 재 호출
+            long startTime = timeUtil.convertToEpochSeconds(LocalDateTime.now().minusDays(PERIOD_OF_RECENT_MATCH));
+            return riotClient.extractMatchIds(startTime, null, QUICK.getQueueId(), null, 0, NUMBER_OF_RECENT_MATCH, region, puuid);
+        }
+
+        // 랭크 게임의 경우 lastUpdatedAt부터 현재까지 조회되지 않은 매치만을 조회
+        long startTime = timeUtil.convertToEpochSeconds(lastUpdatedAt);
+        return riotClient.extractMatchIds(
+                startTime, null,
+                queueType == SOLO ? SOLO.getQueueId() : FLEX.getQueueId(),
+                null, 0, 100, region, puuid
+        );
     }
 
     @Transactional
