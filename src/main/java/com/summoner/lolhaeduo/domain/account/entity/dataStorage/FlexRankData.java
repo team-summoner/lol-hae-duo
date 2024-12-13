@@ -38,4 +38,12 @@ public class FlexRankData {
     public static FlexRankData of(String tier, String ranks, int wins, int totalGames, Kda kda) {
         return new FlexRankData(tier, ranks, wins, totalGames, kda);
     }
+
+    public void update(String tier, String ranks, int wins, int totalGames, Kda kda) {
+        this.tier = tier;
+        this.ranks = ranks;
+        this.wins = wins;
+        this.totalGames = totalGames;
+        this.kda = kda;
+    }
 }
