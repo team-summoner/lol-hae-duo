@@ -11,6 +11,9 @@ import com.summoner.lolhaeduo.domain.account.entity.dataStorage.QuickGameData;
 import com.summoner.lolhaeduo.domain.account.entity.dataStorage.SoloRankData;
 import com.summoner.lolhaeduo.domain.account.repository.AccountGameDataRepository;
 import com.summoner.lolhaeduo.domain.account.repository.AccountRepository;
+import com.summoner.lolhaeduo.domain.account.repository.dataStorage.FlexRankDataRepository;
+import com.summoner.lolhaeduo.domain.account.repository.dataStorage.QuickGameDataRepository;
+import com.summoner.lolhaeduo.domain.account.repository.dataStorage.SoloRankDataRepository;
 import com.summoner.lolhaeduo.domain.duo.entity.Kda;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -18,6 +21,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.summoner.lolhaeduo.domain.duo.enums.QueueType.*;
@@ -28,6 +32,9 @@ public class AccountGameDataService {
 
     private final RiotClientService riotClientService;
     private final AccountGameDataRepository accountGameDataRepository;
+    private final QuickGameDataRepository quickGameDataRepository;
+    private final SoloRankDataRepository soloRankDataRepository;
+    private final FlexRankDataRepository flexRankDataRepository;
     private final AccountRepository accountRepository;
 
     private static final int NUMBER_OF_RECENT_MATCH = 20;
@@ -77,7 +84,67 @@ public class AccountGameDataService {
     }
 
     // update를 하기 위해서는 updatedAt을 사용해서 추가 로직이 필요함
-    public AccountGameData updateAccountGameData(Account account) {
-        return null;
+    @Transactional
+    public void updateAccountGameData(Account account) {
+        // 1. AccountGameData를 불러온다.
+        AccountGameData recentData = account.getAccountGameData();
+        SoloRankData soloRankData = recentData.getSoloRankData();
+        FlexRankData flexRankData = recentData.getFlexRankData();
+
+        // 2. 가장 최근 업데이트 날짜를 확인한다.
+        LocalDateTime modifiedAt = recentData.getModifiedAt();
+
+        // 3. 프로필 아이콘을 업데이트한다.
+        String updatedProfileIconUrl = riotClientService.updateProfileIconUrl(account);
+
+        // 4. 반영해야할 매치 ID가 있는지 조회한다.
+        RankStats rankStats = riotClientService.getRankGameStats(account.getAccountDetail().getEncryptedSummonerId(), account.getServer());
+        quickGameDataRepository.delete(recentData.getQuickGameData());      // 업데이트 시 일반 게임 데이터는 초기화 후 다시 조회한다.
+
+        List<String> quickMatchIds = riotClientService.updateMatchIds(QUICK, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid());
+        List<String> soloMatchIds = riotClientService.updateMatchIds(SOLO, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid());
+        List<String> flexMatchIds = riotClientService.updateMatchIds(FLEX, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid());
+
+        MatchStats quickStats = riotClientService.getMatchStats(account.getId(), quickMatchIds, QUICK, account.getSummonerName(), account.getTagLine(), account.getRegion());
+        MatchStats soloStats = riotClientService.getMatchStats(account.getId(), soloMatchIds, SOLO, account.getSummonerName(), account.getTagLine(), account.getRegion());
+        MatchStats flexStats = riotClientService.getMatchStats(account.getId(), flexMatchIds, FLEX, account.getSummonerName(), account.getTagLine(), account.getRegion());
+
+        QuickGameData updatedQuickGameData = QuickGameData.of(
+                quickStats.getWins(), quickStats.getTotalGames(),
+                Kda.of(quickStats.getAverageKill(), quickStats.getAverageAssist(), quickStats.getAverageDeath())
+        );
+        soloRankData.update(
+                rankStats.getSoloTier(), rankStats.getSoloRank(),
+                soloRankData.getWins() + soloStats.getWins(),
+                soloRankData.getTotalGames() + soloStats.getTotalGames(),
+                updateKda(soloRankData.getKda(), soloRankData.getTotalGames(), soloStats)
+        );
+        flexRankData.update(
+                rankStats.getFlexTier(), rankStats.getFlexRank(),
+                flexRankData.getWins() + flexStats.getWins(),
+                flexRankData.getTotalGames() + flexStats.getTotalGames(),
+                updateKda(flexRankData.getKda(), flexRankData.getTotalGames(), flexStats)
+        );
+
+        // 5. AccountGameData 값을 업데이트한다.
+        recentData.update(
+                updatedProfileIconUrl,
+                quickGameDataRepository.save(updatedQuickGameData),
+                soloRankDataRepository.save(soloRankData),
+                flexRankDataRepository.save(flexRankData)
+        );
+        accountGameDataRepository.save(recentData);
+    }
+
+    private Kda updateKda(Kda previousKda, int totalGames, MatchStats matchStats) {
+        double totalKill = previousKda.getAverageKills() * totalGames;
+        double totalAssist = previousKda.getAverageAssists() * totalGames;
+        double totalDeath = previousKda.getAverageDeaths() * totalGames;
+
+        return Kda.of(
+                (totalKill + (matchStats.getAverageKill() * matchStats.getTotalGames())) / (totalGames + matchStats.getTotalGames()),
+                (totalAssist + (matchStats.getAverageAssist() * matchStats.getTotalGames())) / (totalGames + matchStats.getTotalGames()),
+                (totalDeath + (matchStats.getAverageDeath() * matchStats.getTotalGames())) / (totalGames + matchStats.getTotalGames())
+        );
     }
 }
