@@ -32,4 +32,10 @@ public class QuickGameData {
     public static QuickGameData of(int wins, int totalGames, Kda kda) {
         return new QuickGameData(wins, totalGames, kda);
     }
+
+    public void update(int wins, int totalGames, Kda kda) {
+        this.wins = wins;
+        this.totalGames = totalGames;
+        this.kda = kda;
+    }
 }
