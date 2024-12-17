@@ -111,16 +111,22 @@ public class RiotClientService implements RiotDataProvider {
 
     public List<String> getMatchIds(QueueType queueType, int playCount, AccountRegion region, String puuid) {
         List<String> matchIds = new ArrayList<>();
+        int totalRetrieved = 0;
 
         if (queueType == QUICK) {
-            // 일반 게임의 경우 최근 30일간의 최대 20판을 조회
-            long startTime = timeUtil.convertToEpochSeconds(LocalDateTime.now().minusDays(PERIOD_OF_RECENT_MATCH));
-            matchIds = riotClient.extractMatchIds(startTime, null, QUICK.getQueueId(), null, 0, NUMBER_OF_RECENT_MATCH, region, puuid);
+            int start = 0;
+            while (true) {
+                List<String> partialMatchIds = riotClient.extractMatchIds(null, null, QUICK.getQueueId(), null, start, 100, region, puuid);
+                if (partialMatchIds == null || partialMatchIds.isEmpty()) {
+                    break;
+                }
 
+                matchIds.addAll(partialMatchIds);
+                totalRetrieved += partialMatchIds.size();
+                start += totalRetrieved;
+            }
         } else {
             // 랭크 게임의 경우 playCount에 따라 100판 단위로 API 호출
-            int totalRetrieved = 0;
-
             while (totalRetrieved < playCount) {
                 int count = Math.min(MAX_METHOD_CALL, playCount - totalRetrieved);
                 List<String> partialMatchIds = riotClient.extractMatchIds(
@@ -151,17 +157,10 @@ public class RiotClientService implements RiotDataProvider {
     // 수동으로 전적 정보 갱신 시 하루 안에 100번 게임을 할 가능성이 없다고 판단했습니다.
     // 따라서 RiotClient의 getmatchIds를 한번만 호출해도 필요한 모든 정보를 다 조회할 수 있다고 생각해서, 1번만 호출하게 되었습니다.
     public List<String> updateMatchIds(QueueType queueType, LocalDateTime lastUpdatedAt, AccountRegion region, String puuid) {
-        if (queueType == QUICK) {
-            // 일반 게임의 경우 플레이했던 20판을 재 호출
-            long startTime = timeUtil.convertToEpochSeconds(LocalDateTime.now().minusDays(PERIOD_OF_RECENT_MATCH));
-            return riotClient.extractMatchIds(startTime, null, QUICK.getQueueId(), null, 0, NUMBER_OF_RECENT_MATCH, region, puuid);
-        }
-
-        // 랭크 게임의 경우 lastUpdatedAt부터 현재까지 조회되지 않은 매치만을 조회
         long startTime = timeUtil.convertToEpochSeconds(lastUpdatedAt);
         return riotClient.extractMatchIds(
                 startTime, null,
-                queueType == SOLO ? SOLO.getQueueId() : FLEX.getQueueId(),
+                queueType.getQueueId(),
                 null, 0, 100, region, puuid
         );
     }
@@ -174,9 +173,6 @@ public class RiotClientService implements RiotDataProvider {
         int totalGames = matchIds.size();
         Map<String, Integer> champCount = new HashMap<>();
         Map<String, Integer> winCountMap = new HashMap<>();
-
-        // 20 게임 제한을 위한 서브 리스트
-        List<String> limitedMatchIds = matchIds.size() > NUMBER_OF_RECENT_MATCH ? matchIds.subList(0, NUMBER_OF_RECENT_MATCH) : matchIds;
 
         for (String matchId : matchIds) {
             FormattedMatchResponse matchResponse = riotClient.getMatchDetails(matchId, summonerName, tagLine, region);
@@ -196,8 +192,8 @@ public class RiotClientService implements RiotDataProvider {
             winRate = (double) winCount / totalGames * 100;
         }
 
-        // 최근 20경기에 대해 KDA 계산
-        for (String matchId : limitedMatchIds) {
+        // 모든 경기에 대한 KDA 계산
+        for (String matchId : matchIds) {
             FormattedMatchResponse matchResponse = riotClient.getMatchDetails(matchId, summonerName, tagLine, region);
 
             if (matchResponse != null) {
@@ -207,14 +203,9 @@ public class RiotClientService implements RiotDataProvider {
             }
         }
 
-        double averageKill = 0;
-        double averageDeath = 0;
-        double averageAssist = 0;
-        if (!limitedMatchIds.isEmpty()) {
-            averageKill = (double) totalKills / limitedMatchIds.size();
-            averageDeath = (double) totalDeath / limitedMatchIds.size();
-            averageAssist = (double) totalAssists / limitedMatchIds.size();
-        }
+        double averageKill = (double) totalKills / totalGames;
+        double averageDeath = (double) totalDeath / totalGames;
+        double averageAssist = (double) totalAssists / totalGames;
 
         // 동일한 accountId와 queueType에 대한 중복 데이터 발생 방지 : 항상 최신 데이터로 덮어씌움
         favoriteRepository.deleteByAccountIdAndQueueType(accountId, queueType);
