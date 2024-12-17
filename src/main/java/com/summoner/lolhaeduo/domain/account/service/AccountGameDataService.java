@@ -99,7 +99,6 @@ public class AccountGameDataService {
 
         // 4. 반영해야할 매치 ID가 있는지 조회한다.
         RankStats rankStats = riotClientService.getRankGameStats(account.getAccountDetail().getEncryptedSummonerId(), account.getServer());
-        quickGameDataRepository.delete(recentData.getQuickGameData());      // 업데이트 시 일반 게임 데이터는 초기화 후 다시 조회한다.
 
         List<String> quickMatchIds = riotClientService.updateMatchIds(QUICK, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid());
         List<String> soloMatchIds = riotClientService.updateMatchIds(SOLO, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid());
