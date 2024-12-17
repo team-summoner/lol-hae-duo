@@ -92,6 +92,7 @@ public class AccountGameDataService {
     public void updateAccountGameData(Account account) {
         // 1. AccountGameData를 불러온다.
         AccountGameData recentData = account.getAccountGameData();
+        QuickGameData quickGameData = recentData.getQuickGameData();
         SoloRankData soloRankData = recentData.getSoloRankData();
         FlexRankData flexRankData = recentData.getFlexRankData();
 
@@ -116,7 +117,7 @@ public class AccountGameDataService {
         MatchStats soloStats = riotClientService.getMatchStats(account.getId(), soloMatchIds, SOLO, account.getSummonerName(), account.getTagLine(), account.getRegion());
         MatchStats flexStats = riotClientService.getMatchStats(account.getId(), flexMatchIds, FLEX, account.getSummonerName(), account.getTagLine(), account.getRegion());
 
-        QuickGameData updatedQuickGameData = QuickGameData.of(
+        quickGameData.update(
                 quickStats.getWins(), quickStats.getTotalGames(),
                 Kda.of(quickStats.getAverageKill(), quickStats.getAverageAssist(), quickStats.getAverageDeath())
         );
@@ -136,7 +137,7 @@ public class AccountGameDataService {
         // 5. AccountGameData 값을 업데이트한다.
         recentData.update(
                 updatedProfileIconUrl,
-                quickGameDataRepository.save(updatedQuickGameData),
+                quickGameDataRepository.save(quickGameData),
                 soloRankDataRepository.save(soloRankData),
                 flexRankDataRepository.save(flexRankData)
         );
