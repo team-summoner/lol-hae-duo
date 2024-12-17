@@ -55,6 +55,10 @@ public class AccountGameDataService {
         List<String> soloMatchIds = riotClientService.getMatchIds(SOLO, rankStats.getSoloTotalGames(), account.getRegion(), account.getAccountDetail().getPuuid());
         List<String> flexMatchIds = riotClientService.getMatchIds(FLEX, rankStats.getFlexTotalGames(), account.getRegion(), account.getAccountDetail().getPuuid());
 
+        if (quickMatchIds.isEmpty() || soloMatchIds.isEmpty() || flexMatchIds.isEmpty()) {
+            return;
+        }
+
         // 매치 상세 정보 가져오기(승/패, KDA, 최근 선호 챔피언 통계 정보)
         MatchStats quickStats = riotClientService.getMatchStats(account.getId(), quickMatchIds, QUICK, account.getSummonerName(), account.getTagLine(), account.getRegion());
         MatchStats soloStats = riotClientService.getMatchStats(account.getId(), soloMatchIds, SOLO, account.getSummonerName(), account.getTagLine(), account.getRegion());
@@ -103,6 +107,10 @@ public class AccountGameDataService {
         List<String> quickMatchIds = riotClientService.updateMatchIds(QUICK, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid());
         List<String> soloMatchIds = riotClientService.updateMatchIds(SOLO, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid());
         List<String> flexMatchIds = riotClientService.updateMatchIds(FLEX, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid());
+
+        if (quickMatchIds.isEmpty() || soloMatchIds.isEmpty() || flexMatchIds.isEmpty()) {
+            return;
+        }
 
         MatchStats quickStats = riotClientService.getMatchStats(account.getId(), quickMatchIds, QUICK, account.getSummonerName(), account.getTagLine(), account.getRegion());
         MatchStats soloStats = riotClientService.getMatchStats(account.getId(), soloMatchIds, SOLO, account.getSummonerName(), account.getTagLine(), account.getRegion());
