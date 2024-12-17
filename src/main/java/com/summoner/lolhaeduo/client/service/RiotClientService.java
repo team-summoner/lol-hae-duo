@@ -82,16 +82,16 @@ public class RiotClientService implements RiotDataProvider {
             int losses = leagueInfo.getLosses();
 
             if (leagueInfo.getQueueType().equals(SOLO.getQueueType())) {
-                soloWins = wins;
-                soloLosses = losses;
-                soloTotalGames = wins + losses;
+                soloWins += wins;
+                soloLosses += losses;
+                soloTotalGames += wins + losses;
                 soloTier = leagueInfo.getTier();
                 soloRank = leagueInfo.getRank();
             }
             else if (leagueInfo.getQueueType().equals(FLEX.getQueueType())) {
-                flexWins = wins;
-                flexLosses = losses;
-                flexTotalGames = wins + losses;
+                flexWins += wins;
+                flexLosses += losses;
+                flexTotalGames += wins + losses;
                 flexTier = leagueInfo.getTier();
                 flexRank = leagueInfo.getRank();
             }
@@ -154,8 +154,6 @@ public class RiotClientService implements RiotDataProvider {
         return matchIds;
     }
 
-    // 수동으로 전적 정보 갱신 시 하루 안에 100번 게임을 할 가능성이 없다고 판단했습니다.
-    // 따라서 RiotClient의 getmatchIds를 한번만 호출해도 필요한 모든 정보를 다 조회할 수 있다고 생각해서, 1번만 호출하게 되었습니다.
     public List<String> updateMatchIds(QueueType queueType, LocalDateTime lastUpdatedAt, AccountRegion region, String puuid) {
         long startTime = timeUtil.convertToEpochSeconds(lastUpdatedAt);
         return riotClient.extractMatchIds(
