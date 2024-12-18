@@ -26,7 +26,7 @@ import static com.summoner.lolhaeduo.domain.duo.enums.QueueType.*;
 
 @Service
 @RequiredArgsConstructor
-public class RiotClientService implements RiotDataProvider {
+public class RiotClientService {
 
     private final RiotClient riotClient;
     private final TimeUtil timeUtil;
