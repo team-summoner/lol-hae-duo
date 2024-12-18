@@ -38,4 +38,9 @@ public class Favorite {
         this.playCount = playCount;
         this.winCount = winCount;
     }
+
+    public void update(int playCount, int winCount) {
+        this.playCount += playCount;
+        this.winCount += winCount;
+    }
 }
