@@ -207,14 +207,21 @@ public class RiotClientService {
         double averageDeath = (double) totalDeath / totalGames;
         double averageAssist = (double) totalAssists / totalGames;
 
-        // 동일한 accountId와 queueType에 대한 중복 데이터 발생 방지 : 항상 최신 데이터로 덮어씌움
-        favoriteRepository.deleteByAccountIdAndQueueType(accountId, queueType);
+        // accountId, queueType, championName으로 생성된 Favorite이 있으면 업데이트하고, 없으면 새로 만든다.
+        for (Map.Entry<String, Integer> entry : champCount.entrySet()) {
+            String championName = entry.getKey();
+            int playCount = entry.getValue();
+            int championWinCount = winCountMap.getOrDefault(championName, 0);
 
-        List<Favorite> favorites = champCount.entrySet().stream()
-                .map(entry -> new Favorite(accountId, queueType, entry.getKey(), entry.getValue(), winCountMap.getOrDefault(entry.getKey(), 0)))
-                .toList();
+            Favorite existingFavorite = favoriteRepository.findByAccountIdAndQueueTypeAndChampionName(accountId, queueType, championName);
 
-        favoriteRepository.saveAll(favorites);
+            if (existingFavorite != null) {
+                existingFavorite.update(playCount, championWinCount);
+            } else {
+                Favorite newFavorite = new Favorite(accountId, queueType, championName, playCount, championWinCount);
+                favoriteRepository.save(newFavorite);
+            }
+        }
 
         return new MatchStats(
                 winCount, totalGames - winCount, totalGames, queueType,
