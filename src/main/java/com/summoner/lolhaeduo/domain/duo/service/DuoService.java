@@ -150,7 +150,7 @@ public class DuoService {
 
 
     @Transactional
-    public DuoUpdateResponse update(Long memberId, Long duoId, DuoUpdateRequest request) {
+    public DuoUpdateResponse updateDuo(Long memberId, Long duoId, DuoUpdateRequest request) {
         Duo duo = duoRepository.findById(duoId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 듀오 찾기 글입니다."));
         if (duo.getDeletedAt() != null) {
             throw new IllegalStateException("삭제된 듀오 찾기 글 입니다.");
