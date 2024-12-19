@@ -38,8 +38,6 @@ public class AccountGameDataService {
     private final FlexRankDataRepository flexRankDataRepository;
     private final AccountRepository accountRepository;
 
-    private static final int NUMBER_OF_RECENT_MATCH = 20;
-
     @Async
     @EventListener
     @Transactional
@@ -65,38 +63,51 @@ public class AccountGameDataService {
                 RiotApiMatchIdRequest.of(FLEX, rankStats.getFlexTotalGames(), account.getRegion(), account.getAccountDetail().getPuuid())
         );
 
-        if (quickMatchIds.isEmpty() || soloMatchIds.isEmpty() || flexMatchIds.isEmpty()) {
+        // 매치 상세 정보 가져오기
+        QuickGameData quickGameData = null;
+        if (!quickMatchIds.isEmpty()) {
+            RiotApiMatchInfoResponse quickStats = riotClientUtil.getMatchInfos(
+                    RiotApiMatchInfoRequest.of(account.getId(), quickMatchIds, QUICK, account.getSummonerName(), account.getTagLine(), account.getRegion())
+            );
+
+            quickGameData = QuickGameData.of(
+                    quickStats.getWins(), quickStats.getTotalGames(),
+                    Kda.of(quickStats.getAverageKill(), quickStats.getAverageAssist(), quickStats.getAverageDeath())
+            );
+        }
+
+        SoloRankData soloRankData = null;
+        if (!soloMatchIds.isEmpty()) {
+            RiotApiMatchInfoResponse soloStats = riotClientUtil.getMatchInfos(
+                    RiotApiMatchInfoRequest.of(account.getId(), soloMatchIds, SOLO, account.getSummonerName(), account.getTagLine(), account.getRegion())
+            );
+
+            soloRankData = SoloRankData.of(
+                    rankStats.getSoloTier(), rankStats.getSoloRank(),
+                    soloStats.getWins(), soloStats.getTotalGames(),
+                    Kda.of(soloStats.getAverageKill(), soloStats.getAverageAssist(), soloStats.getAverageDeath())
+            );
+        }
+
+        FlexRankData flexRankData = null;
+        if (!flexMatchIds.isEmpty()) {
+            RiotApiMatchInfoResponse flexStats = riotClientUtil.getMatchInfos(
+                    RiotApiMatchInfoRequest.of(account.getId(), flexMatchIds, FLEX, account.getSummonerName(), account.getTagLine(), account.getRegion())
+            );
+
+            flexRankData = FlexRankData.of(
+                    rankStats.getFlexTier(), rankStats.getFlexRank(),
+                    flexStats.getWins(), flexStats.getTotalGames(),
+                    Kda.of(flexStats.getAverageKill(), flexStats.getAverageAssist(), flexStats.getAverageDeath())
+            );
+        }
+
+        if (quickGameData == null && soloRankData == null && flexRankData == null) {
             return;
         }
 
-        // 매치 상세 정보 가져오기(승/패, KDA, 최근 선호 챔피언 통계 정보)
-        RiotApiMatchInfoResponse quickStats = riotClientUtil.getMatchInfos(
-                RiotApiMatchInfoRequest.of(account.getId(), quickMatchIds, QUICK, account.getSummonerName(), account.getTagLine(), account.getRegion())
-        );
-        RiotApiMatchInfoResponse soloStats = riotClientUtil.getMatchInfos(
-                RiotApiMatchInfoRequest.of(account.getId(), soloMatchIds, SOLO, account.getSummonerName(), account.getTagLine(), account.getRegion())
-        );
-        RiotApiMatchInfoResponse flexStats = riotClientUtil.getMatchInfos(
-                RiotApiMatchInfoRequest.of(account.getId(), flexMatchIds, FLEX, account.getSummonerName(), account.getTagLine(), account.getRegion())
-        );
-
-        // 각각 데이터 객체 생성
         String iconUrl = riotClientUtil.getProfileIcon(
                 RiotApiUpdateProfileRequest.of(account.getAccountDetail().getPuuid(), account.getServer())
-        );
-        QuickGameData quickGameData = QuickGameData.of(
-                quickStats.getWins(), quickStats.getTotalGames(),
-                Kda.of(quickStats.getAverageKill(), quickStats.getAverageAssist(), quickStats.getAverageDeath())
-        );
-        SoloRankData soloRankData = SoloRankData.of(
-                rankStats.getSoloTier(), rankStats.getSoloRank(),
-                soloStats.getWins(), soloStats.getTotalGames(),
-                Kda.of(soloStats.getAverageKill(), soloStats.getAverageAssist(), soloStats.getAverageDeath())
-        );
-        FlexRankData flexRankData = FlexRankData.of(
-                rankStats.getFlexTier(), rankStats.getFlexRank(),
-                flexStats.getWins(), flexStats.getTotalGames(),
-                Kda.of(flexStats.getAverageKill(), flexStats.getAverageAssist(), flexStats.getAverageDeath())
         );
 
         AccountGameData newAccountGameData = AccountGameData.of(iconUrl, quickGameData, soloRankData, flexRankData);
@@ -137,36 +148,43 @@ public class AccountGameDataService {
                 RiotApiUpdateMatchIdRequest.of(FLEX, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid())
         );
 
-        if (quickMatchIds.isEmpty() || soloMatchIds.isEmpty() || flexMatchIds.isEmpty()) {
-            return;
+
+        if (!quickMatchIds.isEmpty()) {
+            RiotApiMatchInfoResponse quickStats = riotClientUtil.getMatchInfos(
+                    RiotApiMatchInfoRequest.of(account.getId(), quickMatchIds, QUICK, account.getSummonerName(), account.getTagLine(), account.getRegion())
+            );
+
+            quickGameData.update(
+                    quickStats.getWins(), quickStats.getTotalGames(),
+                    Kda.of(quickStats.getAverageKill(), quickStats.getAverageAssist(), quickStats.getAverageDeath())
+            );
         }
 
-        RiotApiMatchInfoResponse quickStats = riotClientUtil.getMatchInfos(
-                RiotApiMatchInfoRequest.of(account.getId(), quickMatchIds, QUICK, account.getSummonerName(), account.getTagLine(), account.getRegion())
-        );
-        RiotApiMatchInfoResponse soloStats = riotClientUtil.getMatchInfos(
-                RiotApiMatchInfoRequest.of(account.getId(), soloMatchIds, SOLO, account.getSummonerName(), account.getTagLine(), account.getRegion())
-        );
-        RiotApiMatchInfoResponse flexStats = riotClientUtil.getMatchInfos(
-                RiotApiMatchInfoRequest.of(account.getId(), flexMatchIds, FLEX, account.getSummonerName(), account.getTagLine(), account.getRegion())
-        );
+        if (!soloMatchIds.isEmpty()) {
+            RiotApiMatchInfoResponse soloStats = riotClientUtil.getMatchInfos(
+                    RiotApiMatchInfoRequest.of(account.getId(), soloMatchIds, SOLO, account.getSummonerName(), account.getTagLine(), account.getRegion())
+            );
 
-        quickGameData.update(
-                quickStats.getWins(), quickStats.getTotalGames(),
-                Kda.of(quickStats.getAverageKill(), quickStats.getAverageAssist(), quickStats.getAverageDeath())
-        );
-        soloRankData.update(
-                rankStats.getSoloTier(), rankStats.getSoloRank(),
-                soloRankData.getWins() + soloStats.getWins(),
-                soloRankData.getTotalGames() + soloStats.getTotalGames(),
-                updateKda(soloRankData.getKda(), soloRankData.getTotalGames(), soloStats)
-        );
-        flexRankData.update(
-                rankStats.getFlexTier(), rankStats.getFlexRank(),
-                flexRankData.getWins() + flexStats.getWins(),
-                flexRankData.getTotalGames() + flexStats.getTotalGames(),
-                updateKda(flexRankData.getKda(), flexRankData.getTotalGames(), flexStats)
-        );
+            soloRankData.update(
+                    rankStats.getSoloTier(), rankStats.getSoloRank(),
+                    soloRankData.getWins() + soloStats.getWins(),
+                    soloRankData.getTotalGames() + soloStats.getTotalGames(),
+                    updateKda(soloRankData.getKda(), soloRankData.getTotalGames(), soloStats)
+            );
+        }
+
+        if (!flexMatchIds.isEmpty()) {
+            RiotApiMatchInfoResponse flexStats = riotClientUtil.getMatchInfos(
+                    RiotApiMatchInfoRequest.of(account.getId(), flexMatchIds, FLEX, account.getSummonerName(), account.getTagLine(), account.getRegion())
+            );
+
+            flexRankData.update(
+                    rankStats.getFlexTier(), rankStats.getFlexRank(),
+                    flexRankData.getWins() + flexStats.getWins(),
+                    flexRankData.getTotalGames() + flexStats.getTotalGames(),
+                    updateKda(flexRankData.getKda(), flexRankData.getTotalGames(), flexStats)
+            );
+        }
 
         // 5. AccountGameData 값을 업데이트한다.
         recentData.update(
@@ -175,6 +193,7 @@ public class AccountGameDataService {
                 soloRankDataRepository.save(soloRankData),
                 flexRankDataRepository.save(flexRankData)
         );
+
         accountGameDataRepository.save(recentData);
     }
 
