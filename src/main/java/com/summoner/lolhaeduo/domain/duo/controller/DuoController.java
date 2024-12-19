@@ -9,9 +9,6 @@ import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
 import com.summoner.lolhaeduo.domain.duo.service.DuoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +43,7 @@ public class DuoController {
     }
 
     @PutMapping("/{duoId}")
-    public ResponseEntity<DuoUpdateResponse> update(
+    public ResponseEntity<DuoUpdateResponse> updateDuo(
             @Auth AuthMember authMember,
             @PathVariable Long duoId,
             @Valid @RequestBody DuoUpdateRequest duoUpdateRequest) {
@@ -54,7 +51,7 @@ public class DuoController {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
         }
         Long memberId = authMember.getMemberId();
-        DuoUpdateResponse response = duoService.update(memberId, duoId, duoUpdateRequest);
+        DuoUpdateResponse response = duoService.updateDuo(memberId, duoId, duoUpdateRequest);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
