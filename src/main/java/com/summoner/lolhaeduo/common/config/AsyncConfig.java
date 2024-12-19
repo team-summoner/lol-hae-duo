@@ -1,4 +1,4 @@
-package com.summoner.lolhaeduo.client.event;
+package com.summoner.lolhaeduo.common.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
