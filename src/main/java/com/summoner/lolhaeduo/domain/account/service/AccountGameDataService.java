@@ -1,9 +1,8 @@
 package com.summoner.lolhaeduo.domain.account.service;
 
-import com.summoner.lolhaeduo.client.riot.dto.request.*;
-import com.summoner.lolhaeduo.client.riot.dto.response.RiotApiMatchInfoResponse;
-import com.summoner.lolhaeduo.client.riot.dto.response.RiotApiRankInfoResponse;
-import com.summoner.lolhaeduo.client.riot.util.RiotClientUtil;
+import com.summoner.lolhaeduo.client.dto.MatchStats;
+import com.summoner.lolhaeduo.client.dto.RankStats;
+import com.summoner.lolhaeduo.client.service.RiotClientService;
 import com.summoner.lolhaeduo.common.event.AccountGameDataEvent;
 import com.summoner.lolhaeduo.domain.account.entity.Account;
 import com.summoner.lolhaeduo.domain.account.entity.AccountGameData;
@@ -16,9 +15,6 @@ import com.summoner.lolhaeduo.domain.account.repository.dataStorage.FlexRankData
 import com.summoner.lolhaeduo.domain.account.repository.dataStorage.QuickGameDataRepository;
 import com.summoner.lolhaeduo.domain.account.repository.dataStorage.SoloRankDataRepository;
 import com.summoner.lolhaeduo.domain.duo.entity.Kda;
-import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
-import com.summoner.lolhaeduo.domain.favorite.entity.Favorite;
-import com.summoner.lolhaeduo.domain.favorite.repository.FavoriteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -27,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import static com.summoner.lolhaeduo.domain.duo.enums.QueueType.*;
 
@@ -35,13 +30,14 @@ import static com.summoner.lolhaeduo.domain.duo.enums.QueueType.*;
 @RequiredArgsConstructor
 public class AccountGameDataService {
 
-    private final RiotClientUtil riotClientUtil;
+    private final RiotClientService riotClientService;
     private final AccountGameDataRepository accountGameDataRepository;
-    private final FavoriteRepository favoriteRepository;
     private final QuickGameDataRepository quickGameDataRepository;
     private final SoloRankDataRepository soloRankDataRepository;
     private final FlexRankDataRepository flexRankDataRepository;
     private final AccountRepository accountRepository;
+
+    private static final int NUMBER_OF_RECENT_MATCH = 20;
 
     @Async
     @EventListener
@@ -52,48 +48,24 @@ public class AccountGameDataService {
         );
 
         // 랭크 정보 가져오기
-        RiotApiRankInfoResponse rankStats = riotClientUtil.getRankInfos(
-                RiotApiRankInfoRequest.of(
-                        account.getAccountDetail().getEncryptedSummonerId(),
-                        account.getServer()
-                )
-        );
+        RankStats rankStats = riotClientService.getRankGameStats(account.getAccountDetail().getEncryptedSummonerId(), account.getServer());
 
         // 매치 아이디 가져오기
-        List<String> quickMatchIds = riotClientUtil.getMatchIds(
-                RiotApiMatchIdRequest.of(QUICK, 0, account.getRegion(), account.getAccountDetail().getPuuid())
-        );
-        List<String> soloMatchIds = riotClientUtil.getMatchIds(
-                RiotApiMatchIdRequest.of(SOLO, rankStats.getSoloTotalGames(), account.getRegion(), account.getAccountDetail().getPuuid())
-        );
-        List<String> flexMatchIds = riotClientUtil.getMatchIds(
-                RiotApiMatchIdRequest.of(FLEX, rankStats.getFlexTotalGames(), account.getRegion(), account.getAccountDetail().getPuuid())
-        );
+        List<String> quickMatchIds = riotClientService.getMatchIds(QUICK, NUMBER_OF_RECENT_MATCH, account.getRegion(), account.getAccountDetail().getPuuid());
+        List<String> soloMatchIds = riotClientService.getMatchIds(SOLO, rankStats.getSoloTotalGames(), account.getRegion(), account.getAccountDetail().getPuuid());
+        List<String> flexMatchIds = riotClientService.getMatchIds(FLEX, rankStats.getFlexTotalGames(), account.getRegion(), account.getAccountDetail().getPuuid());
 
         if (quickMatchIds.isEmpty() || soloMatchIds.isEmpty() || flexMatchIds.isEmpty()) {
             return;
         }
 
         // 매치 상세 정보 가져오기(승/패, KDA, 최근 선호 챔피언 통계 정보)
-        RiotApiMatchInfoResponse quickStats = riotClientUtil.getMatchInfos(
-                RiotApiMatchInfoRequest.of(account.getId(), quickMatchIds, QUICK, account.getSummonerName(), account.getTagLine(), account.getRegion())
-        );
-        RiotApiMatchInfoResponse soloStats = riotClientUtil.getMatchInfos(
-                RiotApiMatchInfoRequest.of(account.getId(), soloMatchIds, SOLO, account.getSummonerName(), account.getTagLine(), account.getRegion())
-        );
-        RiotApiMatchInfoResponse flexStats = riotClientUtil.getMatchInfos(
-                RiotApiMatchInfoRequest.of(account.getId(), flexMatchIds, FLEX, account.getSummonerName(), account.getTagLine(), account.getRegion())
-        );
-
-        // Favorite 업데이트 또는 생성
-        saveFavoriteChampions(quickStats.getChampCountMap(), quickStats.getWinCountMap(), account.getId(), QUICK);
-        saveFavoriteChampions(soloStats.getChampCountMap(), soloStats.getWinCountMap(), account.getId(), SOLO);
-        saveFavoriteChampions(flexStats.getChampCountMap(), flexStats.getWinCountMap(), account.getId(), FLEX);
+        MatchStats quickStats = riotClientService.getMatchStats(account.getId(), quickMatchIds, QUICK, account.getSummonerName(), account.getTagLine(), account.getRegion());
+        MatchStats soloStats = riotClientService.getMatchStats(account.getId(), soloMatchIds, SOLO, account.getSummonerName(), account.getTagLine(), account.getRegion());
+        MatchStats flexStats = riotClientService.getMatchStats(account.getId(), flexMatchIds, FLEX, account.getSummonerName(), account.getTagLine(), account.getRegion());
 
         // 각각 데이터 객체 생성
-        String iconUrl = riotClientUtil.getProfileIcon(
-                RiotApiUpdateProfileRequest.of(account.getAccountDetail().getPuuid(), account.getServer())
-        );
+        String iconUrl = riotClientService.updateProfileIconUrl(account);
         QuickGameData quickGameData = QuickGameData.of(
                 quickStats.getWins(), quickStats.getTotalGames(),
                 Kda.of(quickStats.getAverageKill(), quickStats.getAverageAssist(), quickStats.getAverageDeath())
@@ -116,7 +88,6 @@ public class AccountGameDataService {
     }
 
     // update를 하기 위해서는 updatedAt을 사용해서 추가 로직이 필요함
-
     @Transactional
     public void updateAccountGameData(Account account) {
         // 1. AccountGameData를 불러온다.
@@ -129,43 +100,22 @@ public class AccountGameDataService {
         LocalDateTime modifiedAt = recentData.getModifiedAt();
 
         // 3. 프로필 아이콘을 업데이트한다.
-        String updatedProfileIconUrl = riotClientUtil.getProfileIcon(
-                RiotApiUpdateProfileRequest.of(account.getAccountDetail().getPuuid(), account.getServer())
-        );
+        String updatedProfileIconUrl = riotClientService.updateProfileIconUrl(account);
 
         // 4. 반영해야할 매치 ID가 있는지 조회한다.
-        RiotApiRankInfoResponse rankStats = riotClientUtil.getRankInfos(
-                RiotApiRankInfoRequest.of(account.getAccountDetail().getPuuid(), account.getServer())
-        );
+        RankStats rankStats = riotClientService.getRankGameStats(account.getAccountDetail().getEncryptedSummonerId(), account.getServer());
 
-        List<String> quickMatchIds = riotClientUtil.updateMatchIds(
-                RiotApiUpdateMatchIdRequest.of(QUICK, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid())
-        );
-        List<String> soloMatchIds = riotClientUtil.updateMatchIds(
-                RiotApiUpdateMatchIdRequest.of(SOLO, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid())
-        );
-        List<String> flexMatchIds = riotClientUtil.updateMatchIds(
-                RiotApiUpdateMatchIdRequest.of(FLEX, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid())
-        );
+        List<String> quickMatchIds = riotClientService.updateMatchIds(QUICK, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid());
+        List<String> soloMatchIds = riotClientService.updateMatchIds(SOLO, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid());
+        List<String> flexMatchIds = riotClientService.updateMatchIds(FLEX, modifiedAt, account.getRegion(), account.getAccountDetail().getPuuid());
 
         if (quickMatchIds.isEmpty() || soloMatchIds.isEmpty() || flexMatchIds.isEmpty()) {
             return;
         }
 
-        RiotApiMatchInfoResponse quickStats = riotClientUtil.getMatchInfos(
-                RiotApiMatchInfoRequest.of(account.getId(), quickMatchIds, QUICK, account.getSummonerName(), account.getTagLine(), account.getRegion())
-        );
-        RiotApiMatchInfoResponse soloStats = riotClientUtil.getMatchInfos(
-                RiotApiMatchInfoRequest.of(account.getId(), soloMatchIds, SOLO, account.getSummonerName(), account.getTagLine(), account.getRegion())
-        );
-        RiotApiMatchInfoResponse flexStats = riotClientUtil.getMatchInfos(
-                RiotApiMatchInfoRequest.of(account.getId(), flexMatchIds, FLEX, account.getSummonerName(), account.getTagLine(), account.getRegion())
-        );
-
-        // Favorite 업데이트 또는 생성
-        saveFavoriteChampions(quickStats.getChampCountMap(), quickStats.getWinCountMap(), account.getId(), QUICK);
-        saveFavoriteChampions(soloStats.getChampCountMap(), soloStats.getWinCountMap(), account.getId(), SOLO);
-        saveFavoriteChampions(flexStats.getChampCountMap(), flexStats.getWinCountMap(), account.getId(), FLEX);
+        MatchStats quickStats = riotClientService.getMatchStats(account.getId(), quickMatchIds, QUICK, account.getSummonerName(), account.getTagLine(), account.getRegion());
+        MatchStats soloStats = riotClientService.getMatchStats(account.getId(), soloMatchIds, SOLO, account.getSummonerName(), account.getTagLine(), account.getRegion());
+        MatchStats flexStats = riotClientService.getMatchStats(account.getId(), flexMatchIds, FLEX, account.getSummonerName(), account.getTagLine(), account.getRegion());
 
         quickGameData.update(
                 quickStats.getWins(), quickStats.getTotalGames(),
@@ -194,25 +144,7 @@ public class AccountGameDataService {
         accountGameDataRepository.save(recentData);
     }
 
-    private void saveFavoriteChampions(Map<String, Integer> champCountMap, Map<String, Integer> winCountMap, Long accountId, QueueType queueType) {
-        for (Map.Entry<String, Integer> entry : champCountMap.entrySet()) {
-            String championName = entry.getKey();
-            int playCount = entry.getValue();
-            int championWinCount = winCountMap.getOrDefault(championName, 0);
-
-            Favorite existingFavorite = favoriteRepository.findByAccountIdAndQueueTypeAndChampionName(accountId, queueType, championName);
-
-            if (existingFavorite != null) {
-                existingFavorite.update(playCount, championWinCount);
-                return;
-            }
-
-            Favorite newFavorite = Favorite.of(accountId, queueType, championName, playCount, championWinCount);
-            favoriteRepository.save(newFavorite);
-        }
-    }
-
-    private Kda updateKda(Kda previousKda, int totalGames, RiotApiMatchInfoResponse matchStats) {
+    private Kda updateKda(Kda previousKda, int totalGames, MatchStats matchStats) {
         double totalKill = previousKda.getAverageKills() * totalGames;
         double totalAssist = previousKda.getAverageAssists() * totalGames;
         double totalDeath = previousKda.getAverageDeaths() * totalGames;
