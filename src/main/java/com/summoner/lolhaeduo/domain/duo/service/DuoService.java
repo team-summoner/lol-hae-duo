@@ -1,7 +1,5 @@
 package com.summoner.lolhaeduo.domain.duo.service;
 
-import com.summoner.lolhaeduo.client.entity.Favorite;
-import com.summoner.lolhaeduo.client.repository.FavoriteRepository;
 import com.summoner.lolhaeduo.common.dto.AuthMember;
 import com.summoner.lolhaeduo.common.dto.PageResponse;
 import com.summoner.lolhaeduo.domain.account.entity.Account;
@@ -15,6 +13,8 @@ import com.summoner.lolhaeduo.domain.duo.entity.Duo;
 import com.summoner.lolhaeduo.domain.duo.enums.Lane;
 import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
 import com.summoner.lolhaeduo.domain.duo.repository.DuoRepository;
+import com.summoner.lolhaeduo.domain.favorite.entity.Favorite;
+import com.summoner.lolhaeduo.domain.favorite.repository.FavoriteRepository;
 import com.summoner.lolhaeduo.domain.member.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
