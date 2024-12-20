@@ -19,7 +19,7 @@ import java.util.List;
 public class RiotClientUtil {
 
     private final RestTemplate restTemplate;
-    private final String riotClientApiBaseUrl = "http://riot-client-server-url/riot-client";
+    private final String riotClientApiBaseUrl = "http://52.79.242.133:8080/riot-client";
 
     // RiotClientController - /account-infos [POST]
     public RiotApiAccountInfoResponse getAccountInfos(RiotApiAccountInfoRequest request) {
@@ -75,5 +75,11 @@ public class RiotClientUtil {
                 url, request, RiotApiMatchInfoResponse.class
         );
         return response.getBody();
+    }
+
+    // DataDragonController - /ddragon
+    public void updateVersion() {
+        String url = riotClientApiBaseUrl + "/ddragon";
+        restTemplate.exchange(url, HttpMethod.GET, null, Void.class);
     }
 }
