@@ -134,7 +134,7 @@ public class RiotClient {
     }
 
     public FormattedMatchResponse getMatchDetails(String matchId, String summonerName, String tagLine, AccountRegion region) {
-        // 직접 제젝한 Lambda Function 으로 랜덤한 매치 데이터를 받습니다.
+        // 직접 제작한 Lambda Function 으로 랜덤한 매치 데이터를 받습니다.
         String baseUrl = "https://oprimofm4f.execute-api.ap-northeast-2.amazonaws.com/default/getMatchDetails";
 
         ResponseEntity<FormattedMatchResponse> response = restTemplate.getForEntity(baseUrl, FormattedMatchResponse.class);
