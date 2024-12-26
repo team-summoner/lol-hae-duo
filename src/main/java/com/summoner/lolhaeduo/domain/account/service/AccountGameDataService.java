@@ -16,6 +16,9 @@ import com.summoner.lolhaeduo.domain.account.repository.dataStorage.FlexRankData
 import com.summoner.lolhaeduo.domain.account.repository.dataStorage.QuickGameDataRepository;
 import com.summoner.lolhaeduo.domain.account.repository.dataStorage.SoloRankDataRepository;
 import com.summoner.lolhaeduo.domain.duo.entity.Kda;
+import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
+import com.summoner.lolhaeduo.domain.favorite.entity.Favorite;
+import com.summoner.lolhaeduo.domain.favorite.repository.FavoriteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -24,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static com.summoner.lolhaeduo.domain.duo.enums.QueueType.*;
 
@@ -37,6 +41,7 @@ public class AccountGameDataService {
     private final SoloRankDataRepository soloRankDataRepository;
     private final FlexRankDataRepository flexRankDataRepository;
     private final AccountRepository accountRepository;
+    private final FavoriteRepository favoriteRepository;
 
     @Async
     @EventListener
@@ -70,6 +75,8 @@ public class AccountGameDataService {
                     RiotApiMatchInfoRequest.of(account.getId(), quickMatchIds, QUICK, account.getSummonerName(), account.getTagLine(), account.getRegion())
             );
 
+            updateFavorite(account.getId(), QUICK, quickStats.getChampCountMap(), quickStats.getWinCountMap());
+
             quickGameData = QuickGameData.of(
                     quickStats.getWins(), quickStats.getTotalGames(),
                     Kda.of(quickStats.getAverageKill(), quickStats.getAverageAssist(), quickStats.getAverageDeath())
@@ -81,6 +88,8 @@ public class AccountGameDataService {
             RiotApiMatchInfoResponse soloStats = riotClientUtil.getMatchInfos(
                     RiotApiMatchInfoRequest.of(account.getId(), soloMatchIds, SOLO, account.getSummonerName(), account.getTagLine(), account.getRegion())
             );
+
+            updateFavorite(account.getId(), SOLO, soloStats.getChampCountMap(), soloStats.getWinCountMap());
 
             soloRankData = SoloRankData.of(
                     rankStats.getSoloTier(), rankStats.getSoloRank(),
@@ -94,6 +103,8 @@ public class AccountGameDataService {
             RiotApiMatchInfoResponse flexStats = riotClientUtil.getMatchInfos(
                     RiotApiMatchInfoRequest.of(account.getId(), flexMatchIds, FLEX, account.getSummonerName(), account.getTagLine(), account.getRegion())
             );
+
+            updateFavorite(account.getId(), FLEX, flexStats.getChampCountMap(), flexStats.getWinCountMap());
 
             flexRankData = FlexRankData.of(
                     rankStats.getFlexTier(), rankStats.getFlexRank(),
@@ -117,6 +128,7 @@ public class AccountGameDataService {
     }
 
     // update를 하기 위해서는 updatedAt을 사용해서 추가 로직이 필요함
+
     @Transactional
     public void updateAccountGameData(Account account) {
         // 1. AccountGameData를 불러온다.
@@ -154,6 +166,8 @@ public class AccountGameDataService {
                     RiotApiMatchInfoRequest.of(account.getId(), quickMatchIds, QUICK, account.getSummonerName(), account.getTagLine(), account.getRegion())
             );
 
+            updateFavorite(account.getId(), QUICK, quickStats.getChampCountMap(), quickStats.getWinCountMap());
+
             quickGameData.update(
                     quickStats.getWins(), quickStats.getTotalGames(),
                     Kda.of(quickStats.getAverageKill(), quickStats.getAverageAssist(), quickStats.getAverageDeath())
@@ -164,6 +178,8 @@ public class AccountGameDataService {
             RiotApiMatchInfoResponse soloStats = riotClientUtil.getMatchInfos(
                     RiotApiMatchInfoRequest.of(account.getId(), soloMatchIds, SOLO, account.getSummonerName(), account.getTagLine(), account.getRegion())
             );
+
+            updateFavorite(account.getId(), SOLO, soloStats.getChampCountMap(), soloStats.getWinCountMap());
 
             soloRankData.update(
                     rankStats.getSoloTier(), rankStats.getSoloRank(),
@@ -177,6 +193,8 @@ public class AccountGameDataService {
             RiotApiMatchInfoResponse flexStats = riotClientUtil.getMatchInfos(
                     RiotApiMatchInfoRequest.of(account.getId(), flexMatchIds, FLEX, account.getSummonerName(), account.getTagLine(), account.getRegion())
             );
+
+            updateFavorite(account.getId(), FLEX, flexStats.getChampCountMap(), flexStats.getWinCountMap());
 
             flexRankData.update(
                     rankStats.getFlexTier(), rankStats.getFlexRank(),
@@ -195,6 +213,24 @@ public class AccountGameDataService {
         );
 
         accountGameDataRepository.save(recentData);
+    }
+
+    private void updateFavorite(Long accountId, QueueType queueType, Map<String, Integer> champCount, Map<String, Integer> winCount) {
+        // accountId, queueType, championName으로 생성된 Favorite이 있으면 업데이트하고, 없으면 새로 만든다.
+        for (Map.Entry<String, Integer> entry : champCount.entrySet()) {
+            String championName = entry.getKey();
+            int playCount = entry.getValue();
+            int championWinCount = winCount.getOrDefault(championName, 0);
+
+            Favorite existingFavorite = favoriteRepository.findByAccountIdAndQueueTypeAndChampionName(accountId, queueType, championName);
+
+            if (existingFavorite != null) {
+                existingFavorite.update(playCount, championWinCount);
+            } else {
+                Favorite newFavorite = Favorite.of(accountId, queueType, championName, playCount, championWinCount);
+                favoriteRepository.save(newFavorite);
+            }
+        }
     }
 
     private Kda updateKda(Kda previousKda, int totalGames, RiotApiMatchInfoResponse matchStats) {
