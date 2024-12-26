@@ -1,6 +1,8 @@
 package com.summoner.lolhaeduo.domain.account.service;
 
-import com.summoner.lolhaeduo.client.service.RiotClientService;
+import com.summoner.lolhaeduo.client.riot.dto.request.RiotApiAccountInfoRequest;
+import com.summoner.lolhaeduo.client.riot.dto.response.RiotApiAccountInfoResponse;
+import com.summoner.lolhaeduo.client.riot.util.RiotClientUtil;
 import com.summoner.lolhaeduo.common.event.AccountGameDataEvent;
 import com.summoner.lolhaeduo.domain.account.dto.LinkAccountRequest;
 import com.summoner.lolhaeduo.domain.account.entity.Account;
@@ -19,7 +21,7 @@ public class AccountService {
 
     private final MemberRepository memberRepository;
     private final AccountRepository accountRepository;
-    private final RiotClientService riotClientService;
+    private final RiotClientUtil riotClientUtil;
     private final ApplicationEventPublisher eventPublisher;
 
     /**
@@ -39,7 +41,12 @@ public class AccountService {
         }
 
         if (request.getAccountType().equals(RIOT)) {
-            AccountDetail newAccountDetail = riotClientService.createAccountDetail(request);
+            RiotApiAccountInfoResponse response = riotClientUtil.getAccountInfos(
+                    RiotApiAccountInfoRequest.of(
+                            RIOT, request.getAccountId(), request.getAccountPassword(), request.getSummonerName(),
+                            request.getTagLine(), request.getServer(), request.getServer().getRegion()
+                    )
+            );
 
             Account newAccount = Account.of(
                     request.getAccountId(),
@@ -48,7 +55,7 @@ public class AccountService {
                     request.getSummonerName(),
                     request.getTagLine(),
                     request.getServer(),
-                    newAccountDetail,
+                    AccountDetail.of(response.getEncryptedPuuid(), response.getEncryptedAccountId(), response.getEncryptedSummonerId()),
                     memberId
             );
 
