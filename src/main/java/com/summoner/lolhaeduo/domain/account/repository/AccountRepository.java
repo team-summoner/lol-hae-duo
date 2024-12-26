@@ -7,4 +7,6 @@ public interface AccountRepository extends JpaRepository<Account, Long>, Account
     boolean existsByUsername(String username);
 
     Account findByMemberId(Long memberId);
+
+    boolean existsBySummonerNameAndTagLine(String summonerName, String tagLine);
 }
