@@ -1,7 +1,7 @@
-package com.summoner.lolhaeduo.client.repository;
+package com.summoner.lolhaeduo.domain.favorite.repository;
 
-import com.summoner.lolhaeduo.client.entity.Favorite;
 import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
+import com.summoner.lolhaeduo.domain.favorite.entity.Favorite;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
