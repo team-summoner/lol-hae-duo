@@ -6,7 +6,7 @@ import com.summoner.lolhaeduo.client.dto.PuuidResponse;
 import com.summoner.lolhaeduo.client.dto.SummonerResponse;
 import com.summoner.lolhaeduo.domain.account.enums.AccountRegion;
 import com.summoner.lolhaeduo.domain.account.enums.AccountServer;
-import lombok.RequiredArgsConstructor;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -21,10 +21,11 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
 public class RiotClient {
 
     private final RestTemplate restTemplate;
+    private final MeterRegistry meterRegistry;
+
     private final Map<String, String> regionBaseUrls = Map.of(
             "ASIA", "https://asia.api.riotgames.com",
             "AMERICAS", "https://americas.api.riotgames.com",
@@ -33,6 +34,38 @@ public class RiotClient {
 
     @Value("${riot.api.key}")
     private String apiKey;
+
+    public RiotClient(RestTemplate restTemplate, MeterRegistry meterRegistry) {
+        this.restTemplate = restTemplate;
+        this.meterRegistry = meterRegistry;
+
+        this.restTemplate.getInterceptors().add((request, body, execution) -> {
+            long startTime = System.currentTimeMillis();
+            try {
+                var response = execution.execute(request, body);
+
+                meterRegistry.timer("riot_api_response_time",
+                                "uri", request.getURI().getPath(),
+                                "status", String.valueOf(response.getStatusCode().value()))
+                        .record(System.currentTimeMillis() - startTime, java.util.concurrent.TimeUnit.MILLISECONDS);
+
+                String rateLimitRemaining = response.getHeaders().getFirst("X-Rate-Limit-Remaining");
+                if (rateLimitRemaining != null && Integer.parseInt(rateLimitRemaining) == 0) {
+                    meterRegistry.counter("riot_api_rate_limit_reached",
+                                    "uri", request.getURI().getPath())
+                            .increment();
+                }
+
+                return response;
+            } catch (Exception e) {
+                meterRegistry.counter("riot_api_errors",
+                                "uri", request.getURI().getPath(),
+                                "error", e.getClass().getSimpleName())
+                        .increment();
+                throw e;
+            }
+        });
+    }
 
     public PuuidResponse extractPuuid(String summonerName, String tagLine, AccountRegion region) {
         // Choose regional URL
