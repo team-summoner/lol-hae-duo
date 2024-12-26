@@ -40,6 +40,10 @@ public class AccountService {
             throw new IllegalArgumentException("Account already exists");
         }
 
+        if (accountRepository.existsBySummonerNameAndTagLine(request.getSummonerName(), request.getTagLine())) {
+            throw new IllegalArgumentException("Account already exists");
+        }
+
         if (request.getAccountType().equals(RIOT)) {
             RiotApiAccountInfoResponse response = riotClientUtil.getAccountInfos(
                     RiotApiAccountInfoRequest.of(
