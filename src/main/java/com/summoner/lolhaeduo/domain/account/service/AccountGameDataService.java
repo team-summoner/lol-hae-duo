@@ -16,7 +16,11 @@ import com.summoner.lolhaeduo.domain.account.repository.dataStorage.QuickGameDat
 import com.summoner.lolhaeduo.domain.account.repository.dataStorage.SoloRankDataRepository;
 import com.summoner.lolhaeduo.domain.duo.entity.Kda;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +30,7 @@ import java.util.List;
 
 import static com.summoner.lolhaeduo.domain.duo.enums.QueueType.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountGameDataService {
@@ -40,6 +45,7 @@ public class AccountGameDataService {
     @Async
     @EventListener
     @Transactional
+    @Retryable(backoff = @Backoff(delay = 5000))
     public void createAccountGameDataEvent(AccountGameDataEvent event) {
         Account account = accountRepository.findById(event.getAccountId()).orElseThrow(
                 () -> new IllegalArgumentException("Account not found")
@@ -100,6 +106,7 @@ public class AccountGameDataService {
 
     // update를 하기 위해서는 updatedAt을 사용해서 추가 로직이 필요함
     @Transactional
+    @Retryable(backoff = @Backoff(delay = 5000))
     public void updateAccountGameData(Account account) {
         // 1. AccountGameData를 불러온다.
         AccountGameData recentData = account.getAccountGameData();
@@ -168,5 +175,15 @@ public class AccountGameDataService {
                 (totalAssist + (matchStats.getAverageAssist() * matchStats.getTotalGames())) / (totalGames + matchStats.getTotalGames()),
                 (totalDeath + (matchStats.getAverageDeath() * matchStats.getTotalGames())) / (totalGames + matchStats.getTotalGames())
         );
+    }
+
+    @Recover
+    public void recover(RuntimeException e, AccountGameDataEvent event) {
+        log.error("모든 재시도 요청이 실패했습니다. address: {}, error: {}", event, e.getMessage());
+    }
+
+    @Recover
+    public void recover(RuntimeException e, Account account) {
+        log.error("모든 재시도 요청이 실패했습니다. account: {}, error: {}", account, e.getMessage());
     }
 }
