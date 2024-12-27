@@ -4,7 +4,11 @@ riot:
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}
+
 spring:
+  application:
+    name: lol-hae-duo
+
   datasource:
     url: ${MYSQL_URL}
     username: ${MYSQL_USERNAME}
@@ -28,3 +32,26 @@ logging:
     org:
       hibernate:
         SQL: debug # SQL 디버그 정보 출력
+
+# 모니터링
+management:
+  endpoints:
+    enabled-by-default: false           # Endpoint all disable
+    jmx:
+      exposure:
+        exclude: "*"                    # Exclude all endpoint for JMX
+    web:
+      exposure:
+        exclude: env, bean, heapdump, threaddump, configrops, quartz
+        include: metrics, prometheus    # Expose specific endpoints
+      base-path: /summoner              # Change Actuator Default path
+  endpoint:
+    metrics:
+      enabled: true                     # Enable metric endpoint
+    prometheus:
+      enabled: true                     # Enable prometheus endpoint
+  server:
+    port: 8081                          # Use other port for Actuator
+  metrics:
+    tags:
+      application: ${spring.application.name}
