@@ -7,7 +7,8 @@ import lombok.Getter;
 @Getter
 public class DuoCreateRequest {
 
-    private Long accountId;
+    private String summonerName;
+    private String tagLine;
     private QueueType queueType;
     private Lane primaryRole;
     private String primaryChamp;
@@ -16,10 +17,4 @@ public class DuoCreateRequest {
     private Lane targetRole;
     private String memo;
     private Boolean mic;
-
-
-    public void validate() {
-        // 여기서 null 체크
-        //
-    }
 }
