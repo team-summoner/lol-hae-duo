@@ -38,6 +38,10 @@ public class AccountService {
             throw new IllegalArgumentException("Account already exists");
         }
 
+        if (accountRepository.existsBySummonerNameAndTagLine(request.getSummonerName(), request.getTagLine())) {
+            throw new IllegalArgumentException("Account has been linked by another member");
+        }
+
         if (request.getAccountType().equals(RIOT)) {
             AccountDetail newAccountDetail = riotClientService.createAccountDetail(request);
 
