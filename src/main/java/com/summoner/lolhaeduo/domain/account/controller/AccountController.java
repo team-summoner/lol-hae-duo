@@ -3,6 +3,7 @@ package com.summoner.lolhaeduo.domain.account.controller;
 import com.summoner.lolhaeduo.common.annotation.Auth;
 import com.summoner.lolhaeduo.common.dto.AuthMember;
 import com.summoner.lolhaeduo.domain.account.dto.LinkAccountRequest;
+import com.summoner.lolhaeduo.domain.account.dto.LinkAccountResponse;
 import com.summoner.lolhaeduo.domain.account.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,13 @@ public class AccountController {
     private final AccountService accountService;
 
     /**
-     * 반환값은 따로 없고, 인수 값으로 계정 연동에 필요한 입력값을 받는다.
+     * 반환 값으로 생성된 account의 Id 값을 넘겨준다.
      */
     @PostMapping("/link/riot")
-    public ResponseEntity<Void> linkAccount(@RequestBody @Valid LinkAccountRequest request, @Auth AuthMember authMember) {
+    public ResponseEntity<LinkAccountResponse> linkAccount(@RequestBody @Valid LinkAccountRequest request, @Auth AuthMember authMember) {
         Long memberId = authMember.getMemberId();
-        accountService.linkAccount(request, memberId);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(accountService.linkAccount(request, memberId));
     }
 }
