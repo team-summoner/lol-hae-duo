@@ -63,7 +63,7 @@ public class DuoService {
     @Transactional
     public DuoCreateResponse createDuo(DuoCreateRequest request, Long memberId) {
 
-        Account linkedAccount = accountRepository.findBySummonerNameAndTagLine(request.getSummonerName(), request.getTagLine()).orElseThrow(
+        Account linkedAccount = accountRepository.findById(request.getAccountId()).orElseThrow(
                 () -> new IllegalArgumentException("Not Found Account")
         );
 
