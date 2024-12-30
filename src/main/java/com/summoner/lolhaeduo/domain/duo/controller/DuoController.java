@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class DuoController {
 
     private final DuoService duoService;
+
     @GetMapping()
     public ResponseEntity<PageResponse<DuoListResponse>> getDuoList(
         @RequestParam(required = false) QueueType queueType,
@@ -27,15 +28,15 @@ public class DuoController {
         @RequestParam(required = false) String tier,
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "20") int size
-
     ){
         PageResponse<DuoListResponse> duoList = duoService.getPagedDuoList(queueType, lane, tier,page, size);
-        return ResponseEntity.status(HttpStatus.OK).body(duoList);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(duoList);
     }
 
     @PostMapping("")
     public ResponseEntity<DuoCreateResponse> createDuo(@RequestBody DuoCreateRequest createRequest, @Auth AuthMember authMember) {
-
         DuoCreateResponse duoCreateResponse = duoService.createDuo(createRequest,authMember.getMemberId());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -58,12 +59,10 @@ public class DuoController {
     }
 
     @DeleteMapping("/{duoId}")
-    public ResponseEntity<Void> deleteDuo(@PathVariable Long duoId,
-                                          @Auth AuthMember authMember) {
-        // Duo 삭제 로직
+    public ResponseEntity<Void> deleteDuo(@PathVariable Long duoId, @Auth AuthMember authMember) {
         duoService.deleteDuoById(duoId, authMember);
-
-        // HTTP 상태 코드 204 반환
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 }
