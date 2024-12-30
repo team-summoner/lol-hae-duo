@@ -35,7 +35,6 @@ public class DuoService {
     private final AccountRepository accountRepository;
     private final FavoriteRepository favoriteRepository;
 
-
     // 페이징 처리된 듀오 리스트 조회
     public PageResponse<DuoListResponse> getPagedDuoList(QueueType queueType, Lane lane, String tier, int page, int size) {
         // 1. 조건에 맞는 듀오 리스트를 페이징 처리해서 가져오기
@@ -59,7 +58,6 @@ public class DuoService {
                             .getChampionName())
                     .toList();
 
-
             // DuoListResponse 생성
             return DuoListResponse.of(
                 duo,
@@ -68,7 +66,6 @@ public class DuoService {
                 favoriteChampNames
             );
         });
-
         return  PageResponse.of(response.toList(), pageable , response.getTotalPages());
     }
 
@@ -104,7 +101,6 @@ public class DuoService {
         if (savedDuo.getWins() + savedDuo.getLosses() != 0) {
             winRate = savedDuo.getWins() * 100 / (savedDuo.getWins() + savedDuo.getLosses());
         }
-
         return new DuoCreateResponse(savedDuo, winRate);
     }
 
