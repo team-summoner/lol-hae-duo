@@ -48,18 +48,30 @@ public class DuoService {
             Account account = accountRepository.findById(duo.getAccountId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 계정을 찾을 수 없습니다. accountId=" + duo.getAccountId()));
 
+            List<Long> favoriteIds = favoriteRepository.findTop3ByAccountIdAndQueueTypeOrderByPlayCountDesc(account.getId(), duo.getQueueType())
+                    .stream()
+                    .map(Favorite::getId)
+                    .toList();
+
+            List<String> favoriteChampNames = favoriteIds.stream()
+                    .map(favoriteId -> favoriteRepository.findById(favoriteId)
+                            .orElseThrow(() -> new IllegalArgumentException("Favorite not found"))
+                            .getChampionName())
+                    .toList();
+
 
             // DuoListResponse 생성
             return DuoListResponse.of(
                 duo,
                 account.getSummonerName(),
-                account.getTagLine()
-
+                account.getTagLine(),
+                favoriteChampNames
             );
         });
 
         return  PageResponse.of(response.toList(), pageable , response.getTotalPages());
     }
+
     @Transactional
     public DuoCreateResponse createDuo(DuoCreateRequest request, Long memberId) {
 
@@ -88,7 +100,7 @@ public class DuoService {
         );
 
         Duo savedDuo = duoRepository.save(duo);
-        int winRate = (int) ((double) duo.getWins() / (duo.getWins() + duo.getLosses()));
+        int winRate = duo.getWins() * 100 / (duo.getWins() + duo.getLosses());
 
         return new DuoCreateResponse(savedDuo, winRate);
     }
