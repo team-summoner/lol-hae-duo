@@ -35,10 +35,6 @@ public class AccountService {
             throw new IllegalArgumentException("Account limit(3) exceeded");
         }
 
-        if (accountRepository.existsByUsername(request.getAccountUsername())) {
-            throw new IllegalArgumentException("Account already exists");
-        }
-
         if (accountRepository.existsBySummonerNameAndTagLine(request.getSummonerName(), request.getTagLine())) {
             throw new IllegalArgumentException("Account has been linked by another member");
         }
