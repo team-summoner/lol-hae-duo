@@ -1,0 +1,311 @@
+{
+	"info": {
+		"_postman_id": "49b96c71-ac1b-4e3e-9a79-4b21418caba4",
+		"name": "롤해듀오",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38606084"
+	},
+	"item": [
+		{
+			"name": "인증",
+			"item": [
+				{
+					"name": "회원가입",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"member1\",\r\n    \"password\": \"password123!\",\r\n    \"passwordConfirmation\": \"password123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "로그인",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Save JWT token\", function () {\r",
+									"    if(pm.response.code == 200) {\r",
+									"        pm.environment.set('JWT', pm.response.headers.get(\"Authorization\").substring(7));\r",
+									"    }\r",
+									"\r",
+									"    console.log(pm.response);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"member1\",\r\n    \"password\": \"password123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://lolhaeduo.site/login",
+							"protocol": "http",
+							"host": [
+								"lolhaeduo",
+								"site"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "계정 연동",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwidXNlcm5hbWUiOiJtZW1iZXIxIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTczNTUyNjc1NSwiZXhwIjoxNzM1NjEzMTU1fQ.oz9AYTki-J_xmPapjhLVnJd8bhvs06yDSzPWFOxDLZSJ3qrThhljV5Vgi_kYW-1xJtnqd--zJreg9Nc1mTVYyA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accountType\": \"RIOT\",\r\n    \"accountUsername\": \"yokxim98\",\r\n    \"accountPassword\": \"password\",\r\n    \"summonerName\": \"yokxim\",\r\n    \"tagLine\": \"1323\",\r\n    \"server\": \"KR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/link/riot",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"link",
+								"riot"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "듀오 관리",
+			"item": [
+				{
+					"name": "전체 듀오 조회",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwidXNlcm5hbWUiOiJtZW1iZXIxIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTczNTUyNjc1NSwiZXhwIjoxNzM1NjEzMTU1fQ.oz9AYTki-J_xmPapjhLVnJd8bhvs06yDSzPWFOxDLZSJ3qrThhljV5Vgi_kYW-1xJtnqd--zJreg9Nc1mTVYyA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/duo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"duo"
+							],
+							"query": [
+								{
+									"key": "queueType",
+									"value": "SOLO",
+									"disabled": true
+								},
+								{
+									"key": "lane",
+									"value": "TOP",
+									"disabled": true
+								},
+								{
+									"key": "tier",
+									"value": "SILVER",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "4",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "빠른 대전 듀오 생성",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwidXNlcm5hbWUiOiJtZW1iZXIxIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTczNTUyNjc1NSwiZXhwIjoxNzM1NjEzMTU1fQ.oz9AYTki-J_xmPapjhLVnJd8bhvs06yDSzPWFOxDLZSJ3qrThhljV5Vgi_kYW-1xJtnqd--zJreg9Nc1mTVYyA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accountId\": 33,\r\n    \"queueType\": \"QUICK\",\r\n    \"primaryRole\": \"SUPPORT\",\r\n    \"primaryChamp\": \"Xerath\",\r\n    \"secondaryRole\": \"TOP\",\r\n    \"secondaryChamp\": \"SION\",\r\n    \"targetRole\": \"BOTTOM\",\r\n    \"memo\": \"즐겜하실 분~\",\r\n    \"mic\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/duo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"duo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "랭크 듀오 생성",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwidXNlcm5hbWUiOiJtZW1iZXIxIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTczNTUyNjc1NSwiZXhwIjoxNzM1NjEzMTU1fQ.oz9AYTki-J_xmPapjhLVnJd8bhvs06yDSzPWFOxDLZSJ3qrThhljV5Vgi_kYW-1xJtnqd--zJreg9Nc1mTVYyA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accountId\": 31,\r\n    \"queueType\": \"SOLO\",\r\n    \"primaryRole\": \"BOTTOM\",\r\n    \"targetRole\": \"SUPPORT\",\r\n    \"memo\": \"마스터 양학 듀오 찾습니다.\",\r\n    \"mic\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/duo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"duo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "듀오 수정(빠른 대전으로)",
+					"request": {
+						"method": "PUT",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "듀오 수정(랭크 게임으로)",
+					"request": {
+						"method": "PUT",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "듀오 삭제",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
