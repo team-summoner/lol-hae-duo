@@ -61,6 +61,8 @@ public class AccountGameDataService {
                     quickStats.getWins(), quickStats.getTotalGames(),
                     Kda.of(quickStats.getAverageKill(), quickStats.getAverageAssist(), quickStats.getAverageDeath())
             );
+        } else {
+            quickGameData = QuickGameData.of(0, 0, Kda.of(0,0,0));
         }
 
         SoloRankData soloRankData = null;
@@ -71,6 +73,8 @@ public class AccountGameDataService {
                     soloStats.getWins(), soloStats.getTotalGames(),
                     Kda.of(soloStats.getAverageKill(), soloStats.getAverageAssist(), soloStats.getAverageDeath())
             );
+        } else {
+            soloRankData = SoloRankData.of("UNRANKED", "N/A", 0, 0, Kda.of(0,0,0));
         }
 
         FlexRankData flexRankData = null;
@@ -81,7 +85,8 @@ public class AccountGameDataService {
                     flexStats.getWins(), flexStats.getTotalGames(),
                     Kda.of(flexStats.getAverageKill(), flexStats.getAverageAssist(), flexStats.getAverageDeath())
             );
-
+        } else {
+            flexRankData = FlexRankData.of("UNRANKED", "N/A", 0, 0, Kda.of(0,0,0));
         }
 
         // 조회할 매치 정보가 1개도 존재하지 않으면 리턴
