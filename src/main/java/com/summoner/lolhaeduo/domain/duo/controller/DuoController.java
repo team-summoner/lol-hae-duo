@@ -57,7 +57,7 @@ public class DuoController {
                 .body(response);
     }
 
-    @DeleteMapping("/duo/{duoId}")
+    @DeleteMapping("/{duoId}")
     public ResponseEntity<Void> deleteDuo(@PathVariable Long duoId,
                                           @Auth AuthMember authMember) {
         // Duo 삭제 로직
