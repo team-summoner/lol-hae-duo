@@ -3,6 +3,7 @@ package com.summoner.lolhaeduo.domain.duo.dto;
 import com.summoner.lolhaeduo.domain.duo.entity.Duo;
 import com.summoner.lolhaeduo.domain.duo.entity.Kda;
 import com.summoner.lolhaeduo.domain.duo.enums.Lane;
+import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
 import lombok.Getter;
 
 import java.time.Duration;
@@ -15,6 +16,7 @@ public class DuoListResponse {
   private String profileIconId;
   private String summonerName;
   private String tagLine;
+  private QueueType queueType;
   private String tier;
   private String rank;
   private int winRate;
@@ -37,6 +39,7 @@ public class DuoListResponse {
     this.profileIconId = duo.getProfileIcon();
     this.summonerName = summonerName;
     this.tagLine = tagLine;
+    this.queueType = duo.getQueueType();
     this.tier = duo.getTier();
     this.rank = duo.getRanks();
     try {
