@@ -1,11 +1,13 @@
 package com.summoner.lolhaeduo.domain.duo.dto;
 
 import com.summoner.lolhaeduo.domain.duo.entity.Duo;
+import com.summoner.lolhaeduo.domain.duo.entity.Kda;
 import com.summoner.lolhaeduo.domain.duo.enums.Lane;
 import lombok.Getter;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 public class DuoListResponse {
@@ -15,24 +17,31 @@ public class DuoListResponse {
   private String tagLine;
   private String tier;
   private String rank;
+  private int winRate;
+  private Kda kda;
+  private List<String> favorites;
   private Lane primaryRole;
   private Lane targetRole;
   private String primaryChamp;
   private Lane secondaryRole;
   private String secondaryChamp;
   private String memo;
+  private boolean mic;
   private Long memberId;
   private Long accountId;
   private String relativeTime;
 
 
-  private DuoListResponse(Duo duo, String summonerName, String tagLine) {
+  private DuoListResponse(Duo duo, String summonerName, String tagLine, List<String> favorites) {
     this.id = duo.getId();
     this.profileIconId = duo.getProfileIcon();
     this.summonerName = summonerName;
     this.tagLine = tagLine;
     this.tier = duo.getTier();
     this.rank = duo.getRanks();
+    this.winRate = duo.getWins() * 100 / (duo.getWins() + duo.getLosses());
+    this.kda = duo.getKda();
+    this.favorites = favorites;
     this.primaryRole = duo.getPrimaryRole();
     this.targetRole = duo.getTargetRole();
     this.primaryChamp = duo.getPrimaryChamp();
@@ -44,8 +53,8 @@ public class DuoListResponse {
     this.relativeTime = calculateRelativeTime(duo.getCreatedAt());
   }
 
-  public static DuoListResponse of(Duo duo, String summonerName, String tagLine){
-    return  new DuoListResponse(duo, summonerName, tagLine);
+  public static DuoListResponse of(Duo duo, String summonerName, String tagLine, List<String> favorites){
+    return new DuoListResponse(duo, summonerName, tagLine, favorites);
   }
 
   public String calculateRelativeTime(LocalDateTime createdAt) {
