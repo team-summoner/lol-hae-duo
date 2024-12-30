@@ -35,7 +35,6 @@ public class DuoService {
     private final AccountRepository accountRepository;
     private final FavoriteRepository favoriteRepository;
 
-
     // 페이징 처리된 듀오 리스트 조회
     public PageResponse<DuoListResponse> getPagedDuoList(QueueType queueType, Lane lane, String tier, int page, int size) {
         // 1. 조건에 맞는 듀오 리스트를 페이징 처리해서 가져오기
@@ -48,18 +47,28 @@ public class DuoService {
             Account account = accountRepository.findById(duo.getAccountId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 계정을 찾을 수 없습니다. accountId=" + duo.getAccountId()));
 
+            List<Long> favoriteIds = favoriteRepository.findTop3ByAccountIdAndQueueTypeOrderByPlayCountDesc(account.getId(), duo.getQueueType())
+                    .stream()
+                    .map(Favorite::getId)
+                    .toList();
+
+            List<String> favoriteChampNames = favoriteIds.stream()
+                    .map(favoriteId -> favoriteRepository.findById(favoriteId)
+                            .orElseThrow(() -> new IllegalArgumentException("Favorite not found"))
+                            .getChampionName())
+                    .toList();
 
             // DuoListResponse 생성
             return DuoListResponse.of(
                 duo,
                 account.getSummonerName(),
-                account.getTagLine()
-
+                account.getTagLine(),
+                favoriteChampNames
             );
         });
-
         return  PageResponse.of(response.toList(), pageable , response.getTotalPages());
     }
+
     @Transactional
     public DuoCreateResponse createDuo(DuoCreateRequest request, Long memberId) {
 
@@ -88,8 +97,10 @@ public class DuoService {
         );
 
         Duo savedDuo = duoRepository.save(duo);
-        int winRate = (int) ((double) duo.getWins() / (duo.getWins() + duo.getLosses()));
-
+        int winRate = 0;
+        if (savedDuo.getWins() + savedDuo.getLosses() != 0) {
+            winRate = savedDuo.getWins() * 100 / (savedDuo.getWins() + savedDuo.getLosses());
+        }
         return new DuoCreateResponse(savedDuo, winRate);
     }
 

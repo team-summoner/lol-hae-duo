@@ -12,7 +12,7 @@ public class LinkAccountRequest {
     private AccountType accountType;
 
     @NotNull
-    private String accountId;
+    private String accountUsername;
 
     @NotNull
     private String accountPassword;

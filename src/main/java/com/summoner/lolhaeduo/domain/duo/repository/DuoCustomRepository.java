@@ -7,5 +7,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface DuoCustomRepository {
-  Page<Duo> findDuosByCondition(QueueType queueType, Lane lane, String tier, Pageable pageable);
+    Page<Duo> findDuosByCondition(QueueType queueType, Lane lane, String tier, Pageable pageable);
 }

@@ -3,6 +3,7 @@ package com.summoner.lolhaeduo.domain.account.service;
 import com.summoner.lolhaeduo.client.service.RiotClientService;
 import com.summoner.lolhaeduo.common.event.AccountGameDataEvent;
 import com.summoner.lolhaeduo.domain.account.dto.LinkAccountRequest;
+import com.summoner.lolhaeduo.domain.account.dto.LinkAccountResponse;
 import com.summoner.lolhaeduo.domain.account.entity.Account;
 import com.summoner.lolhaeduo.domain.account.entity.AccountDetail;
 import com.summoner.lolhaeduo.domain.account.repository.AccountRepository;
@@ -27,22 +28,22 @@ public class AccountService {
      * @param request accountType, accountId, accountPassword, summonerName, tagLine, server
      * @param memberId from token
      */
-    public void linkAccount(LinkAccountRequest request, Long memberId) {
+    public LinkAccountResponse linkAccount(LinkAccountRequest request, Long memberId) {
         memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("Not Found Member"));
 
         if (accountRepository.isMemberAccountLimitExceeded(memberId)) {
             throw new IllegalArgumentException("Account limit(3) exceeded");
         }
 
-        if (accountRepository.existsByUsername(request.getAccountId())) {
-            throw new IllegalArgumentException("Account already exists");
+        if (accountRepository.existsBySummonerNameAndTagLine(request.getSummonerName(), request.getTagLine())) {
+            throw new IllegalArgumentException("Account has been linked by another member");
         }
 
         if (request.getAccountType().equals(RIOT)) {
             AccountDetail newAccountDetail = riotClientService.createAccountDetail(request);
 
             Account newAccount = Account.of(
-                    request.getAccountId(),
+                    request.getAccountUsername(),
                     request.getAccountPassword(),
                     RIOT,
                     request.getSummonerName(),
@@ -56,6 +57,9 @@ public class AccountService {
 
             // 이벤트 발생
             eventPublisher.publishEvent(new AccountGameDataEvent(newAccount.getId()));
+
+            return LinkAccountResponse.of(newAccount.getId());
         }
+        return null;
     }
 }
