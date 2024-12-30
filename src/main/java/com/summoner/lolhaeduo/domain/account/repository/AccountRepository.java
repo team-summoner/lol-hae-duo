@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account, Long>, AccountQuerydslRepository{
     boolean existsByUsername(String username);
-    boolean existsBySummonerNameAndTagLine(String summonerName, String summonerName1);
+    boolean existsBySummonerNameAndTagLine(String summonerName, String tagLine);
     Optional<Account> findBySummonerNameAndTagLine(String summonerName, String tagLine);
 }
