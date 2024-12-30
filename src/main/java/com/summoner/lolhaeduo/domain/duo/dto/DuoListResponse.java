@@ -39,7 +39,12 @@ public class DuoListResponse {
     this.tagLine = tagLine;
     this.tier = duo.getTier();
     this.rank = duo.getRanks();
-    this.winRate = duo.getWins() * 100 / (duo.getWins() + duo.getLosses());
+    try {
+      this.winRate = duo.getWins() * 100 / (duo.getWins() + duo.getLosses());
+    } catch (ArithmeticException e) {
+      this.winRate = 0;
+    }
+    this.mic = duo.getMic();
     this.kda = duo.getKda();
     this.favorites = favorites;
     this.primaryRole = duo.getPrimaryRole();
