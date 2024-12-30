@@ -100,7 +100,10 @@ public class DuoService {
         );
 
         Duo savedDuo = duoRepository.save(duo);
-        int winRate = duo.getWins() * 100 / (duo.getWins() + duo.getLosses());
+        int winRate = 0;
+        if (savedDuo.getWins() + savedDuo.getLosses() != 0) {
+            winRate = savedDuo.getWins() * 100 / (savedDuo.getWins() + savedDuo.getLosses());
+        }
 
         return new DuoCreateResponse(savedDuo, winRate);
     }
