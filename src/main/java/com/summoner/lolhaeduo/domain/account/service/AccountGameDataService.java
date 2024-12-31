@@ -89,11 +89,6 @@ public class AccountGameDataService {
             flexRankData = FlexRankData.of("UNRANKED", "N/A", 0, 0, Kda.of(0,0,0));
         }
 
-        // 조회할 매치 정보가 1개도 존재하지 않으면 리턴
-        if(quickMatchIds.isEmpty() && soloMatchIds.isEmpty() && flexMatchIds.isEmpty()) {
-            return;
-        }
-
         // 각각 데이터 객체 생성
         String iconUrl = riotClientService.updateProfileIconUrl(account);
 
