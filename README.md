@@ -178,6 +178,12 @@ API 테스트를 위해 [Postman 워크스페이스]()를 활용하세요.
    * API 문서화, README
      
 2. 이은영(부팀장)
+- Postman을 이용한 API 문서화, 시스템 아키텍처 설계
+- 커스텀 필터를 사용한 JWT 기반 인증-인가 처리
+- 비동기 처리 과정에서 thread pool 조정
+- RestTemplate를 이용한 Riot API 호출에 대한 커스텀 메트릭 등록
+- Prometheus를 이용한 메트릭 수집 및 Grafana를 이용한 메트릭 시각화
+- 모니터링 서버 구축
    
 3. 백현욱
    
