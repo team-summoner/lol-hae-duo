@@ -1,4 +1,4 @@
-<p align="center"><img src="https://github.com/user-attachments/assets/b0e8519c-4520-43c8-8c3a-bc4fd46819d3" width="333"/></p>
+<p align="center"><img src="https://github.com/user-attachments/assets/b0e8519c-4520-43c8-8c3a-bc4fd46819d3" width="400"/></p>
 
 # Lol-Hae-Duo 롤해듀오
 
@@ -146,7 +146,7 @@ API 테스트를 위해 [Postman 워크스페이스]()를 활용하세요.
 ## 🏛️ 구조 및 설계
 
 ### 1. 시스템 아키텍처
-&emsp; <img src="https://github.com/user-attachments/assets/8c6bdf79-44ea-4fdf-a44f-971686b2961f" width=450/>
+&emsp; <img src="https://github.com/user-attachments/assets/8c6bdf79-44ea-4fdf-a44f-971686b2961f" width=500/>
 
 
 ### 2. 주요 클래스
