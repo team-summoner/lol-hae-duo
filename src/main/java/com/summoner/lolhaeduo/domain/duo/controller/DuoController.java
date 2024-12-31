@@ -36,8 +36,11 @@ public class DuoController {
     }
 
     @PostMapping("")
-    public ResponseEntity<DuoCreateResponse> createDuo(@RequestBody DuoCreateRequest createRequest, @Auth AuthMember authMember) {
-        DuoCreateResponse duoCreateResponse = duoService.createDuo(createRequest,authMember.getMemberId());
+    public ResponseEntity<DuoCreateResponse> createDuo(@Valid @RequestBody DuoCreateRequest createRequest, @Auth AuthMember authMember) {
+        if (!createRequest.isQuickQueueTypeValid()) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        DuoCreateResponse duoCreateResponse = duoService.createDuo(createRequest, authMember.getMemberId());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(duoCreateResponse);
@@ -51,8 +54,7 @@ public class DuoController {
         if (!duoUpdateRequest.isQuickQueueTypeValid()) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        Long memberId = authMember.getMemberId();
-        DuoUpdateResponse response = duoService.updateDuo(memberId, duoId, duoUpdateRequest);
+        DuoUpdateResponse response = duoService.updateDuo(authMember.getMemberId(), duoId, duoUpdateRequest);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(response);
