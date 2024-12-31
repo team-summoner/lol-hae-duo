@@ -101,7 +101,7 @@ public class DuoService {
         if (savedDuo.getWins() + savedDuo.getLosses() != 0) {
             winRate = savedDuo.getWins() * 100 / (savedDuo.getWins() + savedDuo.getLosses());
         }
-        return new DuoCreateResponse(savedDuo, winRate);
+        return DuoCreateResponse.of(savedDuo, winRate);
     }
 
     private Duo createDuoByQueueType(QueueType queueType, DuoCreateRequest request, AccountGameData gameData, String profileIconUrl, List<Long> favoriteId, Account linkedAccount) {
@@ -262,6 +262,11 @@ public class DuoService {
                 throw new IllegalArgumentException("삭제 권한이 없습니다.");
             }
         }
+
+        if (existDuo.getDeletedAt() != null) {
+            throw new IllegalArgumentException("이미 삭제된 듀오입니다.");
+        }
+
         // Soft Delete 처리: 삭제 시간 기록
         existDuo.delete();
         duoRepository.save(existDuo);  // 엔티티를 업데이트하여 삭제 시간 저장
