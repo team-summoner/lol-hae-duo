@@ -31,7 +31,7 @@ public class DuoCreateResponse {
     private Long accountId;
     private int winRate;
 
-    public DuoCreateResponse(Duo duo, int winRate) {
+    private DuoCreateResponse(Duo duo, int winRate) {
         this.id = duo.getId();
         this.queueType = duo.getQueueType();
         this.primaryRole = duo.getPrimaryRole();
@@ -51,5 +51,9 @@ public class DuoCreateResponse {
         this.memberId = duo.getMemberId();
         this.accountId = duo.getAccountId();
         this.winRate = winRate;
+    }
+
+    public static DuoCreateResponse of(Duo duo, int winRate) {
+        return new DuoCreateResponse(duo, winRate);
     }
 }
