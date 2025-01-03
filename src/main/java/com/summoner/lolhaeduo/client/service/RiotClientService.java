@@ -13,6 +13,7 @@ import com.summoner.lolhaeduo.domain.account.enums.AccountRegion;
 import com.summoner.lolhaeduo.domain.account.enums.AccountServer;
 import com.summoner.lolhaeduo.domain.duo.enums.QueueType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +22,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 
 import static com.summoner.lolhaeduo.domain.duo.enums.QueueType.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RiotClientService {
@@ -168,41 +171,62 @@ public class RiotClientService {
     @Transactional
     public MatchStats getMatchStats(Long accountId, List<String> matchIds, QueueType queueType, String summonerName, String tagLine, AccountRegion region) {
         // 초기화
-        int totalKills = 0, totalDeath = 0, totalAssists = 0;
-        int winCount = 0;
+        int totalKills = 0, totalDeath = 0, totalAssists = 0, winCount = 0;
         int totalGames = matchIds.size();
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+        List<Future<FormattedMatchResponse>> futures = new ArrayList<>();
+
+        for (String matchId : matchIds) {
+            Callable<FormattedMatchResponse> task = () -> {
+                long threadId = Thread.currentThread().getId();
+                String threadName = Thread.currentThread().getName();
+                log.info("Thread ID: {}, Name: {} is processing matchId: {}", threadId, threadName, matchId);
+
+                FormattedMatchResponse matchResponse = riotClient.getMatchDetails(matchId, summonerName, tagLine, region);
+                if (matchResponse != null) {
+                    return new FormattedMatchResponse(
+                            matchResponse.getChampionName(),
+                            matchResponse.getKills(),
+                            matchResponse.getDeaths(),
+                            matchResponse.getAssists(),
+                            matchResponse.isWin()
+                    );
+                }
+                return null;
+            };
+            futures.add(executorService.submit(task));
+        }
+
         Map<String, Integer> champCount = new HashMap<>();
         Map<String, Integer> winCountMap = new HashMap<>();
 
-        for (String matchId : matchIds) {
-            FormattedMatchResponse matchResponse = riotClient.getMatchDetails(matchId, summonerName, tagLine, region);
+        // 결과 수집
+        for (Future<FormattedMatchResponse> future : futures) {
+            try {
+                FormattedMatchResponse result = future.get();
+                if (result != null) {
+                    champCount.put(result.getChampionName(), champCount.getOrDefault(result.getChampionName(), 0) + 1);
+                    totalKills += result.getKills();
+                    totalDeath += result.getDeaths();
+                    totalAssists += result.getAssists();
 
-            if (matchResponse != null) {
-                String championName = matchResponse.getChampionName();
-                champCount.put(championName, champCount.getOrDefault(championName, 0) + 1);
-
-                if (matchResponse.isWin()) {
-                    winCount++;
-                    winCountMap.put(championName, winCountMap.getOrDefault(championName, 0) + 1);
+                    if (result.isWin()) {
+                        winCount++;
+                        winCountMap.put(result.getChampionName(), winCountMap.getOrDefault(result.getChampionName(), 0) + 1);
+                    }
                 }
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("current error: {}", e.getMessage());
             }
         }
+
+        executorService.shutdown();
+
         double winRate = 0;
         if (queueType == QUICK && totalGames > 0) {
             winRate = (double) winCount / totalGames * 100;
         }
-
-        // 모든 경기에 대한 KDA 계산
-        for (String matchId : matchIds) {
-            FormattedMatchResponse matchResponse = riotClient.getMatchDetails(matchId, summonerName, tagLine, region);
-
-            if (matchResponse != null) {
-                totalKills += matchResponse.getKills();
-                totalDeath += matchResponse.getDeaths();
-                totalAssists += matchResponse.getAssists();
-            }
-        }
-
         double averageKill = (double) totalKills / totalGames;
         double averageDeath = (double) totalDeath / totalGames;
         double averageAssist = (double) totalAssists / totalGames;
