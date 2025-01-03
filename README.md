@@ -168,7 +168,7 @@ API 테스트를 위해 [Postman 워크스페이스]()를 활용하세요.
 
 ## 팀원 소개 및 역할 분담 (각자 적어주시기 바랍니다.)
 
-1. 육심헌(팀장)
+1. 육심헌(팀장) [블로그 주소](https://yokxim.tistory.com/)
    * 프로젝트 방향성 지도, 계획 수립, 전체 총괄
    * 외부 API 호출 Client 코드 작성(RestTemplate, 데이터 가공 로직)
    * Spring Event를 사용한 비동기 로직 작성, 스레드 풀 조정
@@ -177,29 +177,29 @@ API 테스트를 위해 [Postman 워크스페이스]()를 활용하세요.
    * 서버 분리 도입 고려 -> 반려함
    * API 문서화, README
      
-2. 이은영(부팀장)
-- Postman을 이용한 API 문서화, 시스템 아키텍처 설계
-- 커스텀 필터를 사용한 JWT 기반 인증-인가 처리
-- 비동기 처리 과정에서 thread pool 조정
-- RestTemplate를 이용한 Riot API 호출에 대한 커스텀 메트릭 등록
-- Prometheus를 이용한 메트릭 수집 및 Grafana를 이용한 메트릭 시각화
-- 모니터링 서버 구축
+2. 이은영(부팀장) [블로그 주소](https://1step2dream.tistory.com/)
+   * Postman을 이용한 API 문서화, 시스템 아키텍처 설계
+   * 커스텀 필터를 사용한 JWT 기반 인증-인가 처리
+   * 비동기 처리 과정에서 thread pool 조정
+   * RestTemplate를 이용한 Riot API 호출에 대한 커스텀 메트릭 등록
+   * Prometheus를 이용한 메트릭 수집 및 Grafana를 이용한 메트릭 시각화
+   * 모니터링 서버 구축
    
-3. 백현욱
+3. 백현욱 [블로그 주소](https://hubaek.tistory.com/)
    * 라이엇 API 연동 - 랭크 전적 데이터 및 프로필 아이콘 정보 수집
    * EC2 인스턴스 설정
    * RDS 데이터베이스 관리: 안정적인 데이터 관리를 위해 AWS RDS 도입하여 DB 구축 및 보안 설정
    * 가비아를 통해 프로젝트 도메인 구매
    * 구매한 도메인을 AWS EC2와 연결하기 위해 DNS 설정 구성
      
-4. 이지훈
+4. 이지훈 [블로그 주소](https://ezy-i.tistory.com/)
    * 듀오 조회 리스트 API 코드 작성
    * 동기/비동기 개념 학습
    * block/non-block 개념 학습
    * 배포관련 AWS, EC2 개념 학습
    * 기타, 프로젝트 부족한 부분 조사 및 학습
    
-5. 박인선
+5. 박인선 [블로그 주소](https://insight9145.tistory.com/)
    * Amazon SQS 개념 학습
    * 단위시간 내 API 호출 횟수 제한: Resilience4J 라이브러리의 TimeLimiter 개념 학습
 
