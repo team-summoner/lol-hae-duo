@@ -54,6 +54,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     // Micrometer Prometheus Registry
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
+    // Spring retry
+    implementation 'org.springframework.retry:spring-retry'
 }
 
 tasks.named('test') {
