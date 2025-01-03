@@ -16,6 +16,7 @@ import com.summoner.lolhaeduo.domain.account.repository.dataStorage.QuickGameDat
 import com.summoner.lolhaeduo.domain.account.repository.dataStorage.SoloRankDataRepository;
 import com.summoner.lolhaeduo.domain.duo.entity.Kda;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import java.util.List;
 
 import static com.summoner.lolhaeduo.domain.duo.enums.QueueType.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountGameDataService {
@@ -44,6 +46,7 @@ public class AccountGameDataService {
         Account account = accountRepository.findById(event.getAccountId()).orElseThrow(
                 () -> new IllegalArgumentException("Account not found")
         );
+        long startTime = System.currentTimeMillis();
 
         // 랭크 정보 가져오기
         RankStats rankStats = riotClientService.getRankGameStats(account.getAccountDetail().getEncryptedSummonerId(), account.getServer());
@@ -93,6 +96,8 @@ public class AccountGameDataService {
         String iconUrl = riotClientService.updateProfileIconUrl(account);
 
         AccountGameData newAccountGameData = AccountGameData.of(iconUrl, quickGameData, soloRankData, flexRankData);
+        long endTime = System.currentTimeMillis();
+        log.info("API latency : " + (endTime - startTime));
         account.linkAccountGameData(newAccountGameData);
 
         accountGameDataRepository.save(newAccountGameData);
