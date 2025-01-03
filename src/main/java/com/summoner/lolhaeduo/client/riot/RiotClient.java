@@ -7,10 +7,14 @@ import com.summoner.lolhaeduo.client.dto.SummonerResponse;
 import com.summoner.lolhaeduo.domain.account.enums.AccountRegion;
 import com.summoner.lolhaeduo.domain.account.enums.AccountServer;
 import io.micrometer.core.instrument.MeterRegistry;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -20,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class RiotClient {
 
@@ -166,6 +171,10 @@ public class RiotClient {
         return response.getBody();
     }
 
+    @Retryable(
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 5000)
+    )
     public FormattedMatchResponse getMatchDetails(String matchId, String summonerName, String tagLine, AccountRegion region) {
 //        // Choose regional URL
 //        String baseUrl = regionBaseUrls.getOrDefault(region.toString(), null);
@@ -204,5 +213,11 @@ public class RiotClient {
 
         ResponseEntity<FormattedMatchResponse> response = restTemplate.getForEntity(baseUrl, FormattedMatchResponse.class);
         return response.getBody();
+    }
+
+    @Recover
+    public FormattedMatchResponse recover(RuntimeException e, String matchId, String summonerName, String tagLine, AccountRegion region) {
+        log.error("모든 재시도 요청이 실패했습니다. matchId: {}, error: {}", matchId, e.getMessage());
+        return null;
     }
 }
