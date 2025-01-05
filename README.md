@@ -10,18 +10,21 @@
 
 ## 📖 목차
 
-1. 프로젝트 소개
-2. 팀원 소개
-3. 기술 스택
-4. 실행 방법
-5. 주요 기능
-6. 문의
-7. 참고 자료
+1. [프로젝트 소개](프로젝트-소개)
+2. [팀원 소개](#팀원-소개)
+3. [기술 스택](기술-스택)
+4. [실행 방법](실행-방법)
+5. [주요 기능](주요-기능)
+6. [문의](문의)
+7. [참고 자료](참고-자료)
 
 <br>
 
 ## 🎤 프로젝트 소개
 
+<H4>
+프로젝트 기간  (2024/12/02 ~ 2025/01/07)
+</H4>
 지긋지긋한 연패, 실버 4 LP 0점! 한번만 더 지면 브론즈로 강등이라니 ㅠㅠ
 
 내 상황으로부터 날 구해줄 백마탄 버스기사님 어디 없을까??
@@ -60,7 +63,6 @@
 <img src="https://img.shields.io/badge/prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white"> 
 <img src="https://img.shields.io/badge/grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white"> <br>
 <img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white"> 
-<img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"> 
 <img src="https://img.shields.io/badge/amazon ec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white"> <br> 
 <img src="https://img.shields.io/badge/riot games-EB0029?style=for-the-badge&logo=riotgames&logoColor=white">
 
@@ -110,7 +112,7 @@
 
 ### 1. 계정 연동(멤버당 최대 3개 계정 연동 가능)
 - URL: http://lolhaeduo.site/link/riot  [POST]
-   ```
+   ```JSON
    {
     "accountType": {{게임 타입}},
     "accountUsername": {{연동한 계정 ID}},
