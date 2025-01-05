@@ -172,7 +172,7 @@ public class RiotClient {
     }
 
     @Retryable(
-            maxAttempts = 3,
+            maxAttempts = 5,
             backoff = @Backoff(delay = 5000)
     )
     public FormattedMatchResponse getMatchDetails(String matchId, String summonerName, String tagLine, AccountRegion region) {
