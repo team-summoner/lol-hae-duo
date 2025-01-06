@@ -53,7 +53,8 @@
 |:------------------------------------------------------------------------------------:|:--------------------------------------------------------:|:--------------------------------------------------------:|:-------------------------------------------------------:|:------------------------------------------:|
 |![](https://i.postimg.cc/wjvLxZwK/RUID1213a1b32c4d4e2db5fae4628027f47c.jpg?size=120) | ![](https://i.postimg.cc/SNmc3J8x/IMG-6431.png?size=120) | ![](https://i.postimg.cc/vZN94hK4/IMG-0190.jpg?size=120) | ![](https://i.postimg.cc/pXkKHRYY/image-1.png?size=120) | ![](https://i.postimg.cc/c1RQFQvz/1702114078751.jpg?size=120) |
 | [육심헌](https://github.com/yokxim2) |[이은영](https://github.com/Eun-0)|[백현욱](github.com/hubaek)| [이지훈](https://github.com/LEEJI-HOON1) | [박인선](https://github.com/inseonbak) |
-
+| [블로그](https://yokxim.tistory.com/) | [블로그](https://1step2dream.tistory.com) | [블로그](https://hubaek.tistory.com/) | [블로그](https://ezy-i.tistory.com/) |  [블로그](https://insight9145.tistory.com/) |
+| [이메일](yooksi53@gmail.com) |  [이메일](shinely12@gmail.com) |  [이메일](hubaek0815@gmail.com) |  [이메일](hoon0927@gmail.com) |  [이메일](dcba5824@gmail.com) |
 <br>
 
 ## 기술 스택
@@ -64,11 +65,11 @@
 <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
 <img src="https://img.shields.io/badge/spring boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <br>
 <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
-<img src="https://img.shields.io/badge/amazon rds-527FFF?style=for-the-badge&logo=amazonrds&logoColor=white"> <br>
+<img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white"> <br>
 <img src="https://img.shields.io/badge/prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white"> 
 <img src="https://img.shields.io/badge/grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white"> <br>
-<img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white"> 
-<img src="https://img.shields.io/badge/amazon ec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white"> <br> 
+<img src="https://img.shields.io/badge/amazon ec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white">
+<img src="https://img.shields.io/badge/amazon rds-527FFF?style=for-the-badge&logo=amazonrds&logoColor=white"> <br>
 <img src="https://img.shields.io/badge/riot games-EB0029?style=for-the-badge&logo=riotgames&logoColor=white">
 
 ### 사용한 기술
@@ -80,7 +81,7 @@
 
 ### 🪄 Cowork Tools
 
-<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white"> <br>
+<img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> <br>
 <img src="https://img.shields.io/badge/notion-000000?style=or-the-badge&logo=notion&logoColor=white"> <img src="https://img.shields.io/badge/Slack-FE5196?style=or-the-badge&logo=slack&logoColor=white">
 <br>
 <hr/>
