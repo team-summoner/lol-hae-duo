@@ -187,34 +187,40 @@ ResponseBody
 ResponseBody
 
    ```JSON
-  {
-  "id": 123,
-  "profileIconId": "12345",
-  "summonerName": "바텀개",
-  "tagLine": "#KR1",
-  "queueType": "RANKED_SOLO_5x5",
-  "tier": "Diamond",
-  "rank": "II",
-  "winRate": 63,
-  "kda": {
-    "kills": 8,
-    "deaths": 2,
-    "assists": 10
-  },
-  "favorites": ["Ahri", "Yasuo", "Thresh"],
-  "primaryRole": "MID",
-  "targetRole": "JUNGLE",
-  "primaryChamp": "Ahri",
-  "secondaryRole": "TOP",
-  "secondaryChamp": "Yasuo",
-  "memo": "듀오 하실분",
-  "mic": true,
-  "memberId": 2001,
-  "accountId": 101,
-  "relativeTime": "2 hours ago"
+{
+  "contents": [
+    {
+      "id": 123,
+      "profileIconId": "12345",
+      "summonerName": "바텀개",
+      "tagLine": "#KR1",
+      "queueType": "RANKED_SOLO_5x5",
+      "tier": "Diamond",
+      "rank": "II",
+      "winRate": 63,
+      "kda": {
+        "kills": 8,
+        "deaths": 2,
+        "assists": 10
+      },
+      "favorites": [
+        "Ahri",
+        "Yasuo",
+        "Thresh"
+      ],
+      "primaryRole": "MID",
+      "targetRole": "JUNGLE",
+      "primaryChamp": "Ahri",
+      "secondaryRole": "TOP",
+      "secondaryChamp": "Yasuo",
+      "memo": "듀오 하실분",
+      "mic": true,
+      "memberId": 2001,
+      "accountId": 101,
+      "relativeTime": "2 hours ago"
+    }
+  ]
 }
-
-
    ```
 
 ### 4. 듀오 수정
