@@ -1,4 +1,4 @@
-<p align="center"><img src="https://github.com/user-attachments/assets/b0e8519c-4520-43c8-8c3a-bc4fd46819d3" width="400"/></p>
+<p align="center"><a href='https://ifh.cc/v-jHT8cF' target='_blank'><img src='https://ifh.cc/g/jHT8cF.webp'width="400"/></p>
 
 # Lol-Hae-Duo 롤해듀오
 
@@ -15,12 +15,11 @@
 3. [기술 스택](#기술-스택)
 4. [실행 방법](#실행-방법)
 5. [주요 기능](#주요-기능)
-6. [문의](#문의)
-7. [참고 자료](#참고-자료)
+6. [참고 자료](#참고-자료)
 
 <br>
 
-## 🎤 프로젝트 소개
+##  프로젝트 소개
 
 <H4>
 프로젝트 기간  (2024/12/02 ~ 2025/01/07)
@@ -41,20 +40,12 @@
 
 ## 팀원 소개
 
-| 이름 | 블로그 주소 | 개인 이메일 |
-|------|------------|--------------|
-| [육심헌](https://github.com/yokxim2) | https://yokxim.tistory.com/ | yooksi53@gmail.com |
-| [이은영](https://github.com/Eun-0) | https://1step2dream.tistory.com/ | shinely12@gmail.com |
-| [백현욱](github.com/hubaek) | https://hubaek.tistory.com/ | hubaek0815@gmail.com |
-| [이지훈](https://github.com/LEEJI-HOON1) | https://ezy-i.tistory.com/ | hoon0927@gmail.com |
-| [박인선](https://github.com/inseonbak) | https://insight9145.tistory.com/ | dcba5824@gmail.com |
 
-|                                        Backend                                       |                          Backend                         |                          Backend                         |                         Backend                         |                  Backend                   |
-|:------------------------------------------------------------------------------------:|:--------------------------------------------------------:|:--------------------------------------------------------:|:-------------------------------------------------------:|:------------------------------------------:|
-|![](https://i.postimg.cc/wjvLxZwK/RUID1213a1b32c4d4e2db5fae4628027f47c.jpg?size=120) | ![](https://i.postimg.cc/SNmc3J8x/IMG-6431.png?size=120) | ![](https://i.postimg.cc/vZN94hK4/IMG-0190.jpg?size=120) | ![](https://i.postimg.cc/pXkKHRYY/image-1.png?size=120) | ![](https://i.postimg.cc/c1RQFQvz/1702114078751.jpg?size=120) |
-| [육심헌](https://github.com/yokxim2) |[이은영](https://github.com/Eun-0)|[백현욱](github.com/hubaek)| [이지훈](https://github.com/LEEJI-HOON1) | [박인선](https://github.com/inseonbak) |
-| [블로그](https://yokxim.tistory.com/) | [블로그](https://1step2dream.tistory.com) | [블로그](https://hubaek.tistory.com/) | [블로그](https://ezy-i.tistory.com/) |  [블로그](https://insight9145.tistory.com/) |
-| [이메일](yooksi53@gmail.com) |  [이메일](shinely12@gmail.com) |  [이메일](hubaek0815@gmail.com) |  [이메일](hoon0927@gmail.com) |  [이메일](dcba5824@gmail.com) |
+|                                        Backend                                       |                  Backend                  |                          Backend                         |                         Backend                         |                  Backend                   |
+|:------------------------------------------------------------------------------------:|:-----------------------------------------:|:--------------------------------------------------------:|:-------------------------------------------------------:|:------------------------------------------:|
+|![](https://i.postimg.cc/wjvLxZwK/RUID1213a1b32c4d4e2db5fae4628027f47c.jpg?size=120) | ![](https://ifh.cc/g/65d0vS.png?size=120) | ![](https://i.postimg.cc/vZN94hK4/IMG-0190.jpg?size=120) | ![](https://i.postimg.cc/pXkKHRYY/image-1.png?size=120) | ![](https://i.postimg.cc/c1RQFQvz/1702114078751.jpg?size=120) |
+| [육심헌](https://github.com/yokxim2) |      [이은영](https://github.com/Eun-0)      |[백현욱](github.com/hubaek)| [이지훈](https://github.com/LEEJI-HOON1) | [박인선](https://github.com/inseonbak) |
+| [블로그](https://yokxim.tistory.com/) |  [블로그](https://1step2dream.tistory.com)   | [블로그](https://hubaek.tistory.com/) | [블로그](https://ezy-i.tistory.com/) |  [블로그](https://insight9145.tistory.com/) |
 <br>
 
 ## 기술 스택
@@ -65,11 +56,13 @@
 <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
 <img src="https://img.shields.io/badge/spring boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> <br>
 <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
+<img src="https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white">
 <img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white"> <br>
 <img src="https://img.shields.io/badge/prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white"> 
 <img src="https://img.shields.io/badge/grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white"> <br>
 <img src="https://img.shields.io/badge/amazon ec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white">
-<img src="https://img.shields.io/badge/amazon rds-527FFF?style=for-the-badge&logo=amazonrds&logoColor=white"> <br>
+<img src="https://img.shields.io/badge/amazon rds-527FFF?style=for-the-badge&logo=amazonrds&logoColor=white">
+<img src="https://img.shields.io/badge/amazon route53-6633FF?style=for-the-badge&logo=amazonroute53&logoColor=white"><br>
 <img src="https://img.shields.io/badge/riot games-EB0029?style=for-the-badge&logo=riotgames&logoColor=white">
 
 ### 사용한 기술
@@ -114,7 +107,7 @@
 
 <br>
 
-## 🎯 주요 기능
+##  주요 기능
 
 ### 1. 계정 연동(멤버당 최대 3개 계정 연동 가능)
 - URL: http://lolhaeduo.site/link/riot  [POST]
@@ -166,7 +159,7 @@ ResponseBody
   "secondaryRole": "TOP",
   "secondaryChamp": "Yasuo",
   "targetRole": "JUNGLE",
-  "memo": "듀오 구해요",
+  "memo": "듀오 구해요",
   "mic": true,
   "tier": "Diamond",
   "ranks": "II",
@@ -246,7 +239,7 @@ ResponseBody
    {
   "duoId": 123,
   "queueType": "RANKED_SOLO_5x5",
-  "primaryRole": "TOP",
+  "primaryRole": "TOP",
   "primaryChamp": "Ahri",
   "secondaryRole": "MID",
   "secondaryChamp": "Yasuo",
@@ -290,4 +283,4 @@ API 테스트를 위해 [Postman 워크스페이스](https://github.com/user-att
 
 팀 노션 페이지 : [노션](https://www.notion.so/teamsparta/b953cd528364428a9c2fa6c5433efc38)
 
-브로셔 노션 페이지 : [노션]()
+브로셔 노션 페이지 : [노션](https://hubaek.notion.site/3-1723619d0e47815285c7f9ce371dc559?pvs=4)
