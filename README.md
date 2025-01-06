@@ -10,18 +10,21 @@
 
 ## 📖 목차
 
-1. 프로젝트 소개
-2. 팀원 소개
-3. 기술 스택
-4. 실행 방법
-5. 주요 기능
-6. 문의
-7. 참고 자료
+1. [프로젝트 소개](프로젝트-소개)
+2. [팀원 소개](#팀원-소개)
+3. [기술 스택](기술-스택)
+4. [실행 방법](실행-방법)
+5. [주요 기능](주요-기능)
+6. [문의](문의)
+7. [참고 자료](참고-자료)
 
 <br>
 
 ## 🎤 프로젝트 소개
 
+<H4>
+프로젝트 기간  (2024/12/02 ~ 2025/01/07)
+</H4>
 지긋지긋한 연패, 실버 4 LP 0점! 한번만 더 지면 브론즈로 강등이라니 ㅠㅠ
 
 내 상황으로부터 날 구해줄 백마탄 버스기사님 어디 없을까??
@@ -46,6 +49,11 @@
 | [이지훈](https://github.com/LEEJI-HOON1) | https://ezy-i.tistory.com/ | hoon0927@gmail.com |
 | [박인선](https://github.com/inseonbak) | https://insight9145.tistory.com/ | dcba5824@gmail.com |
 
+|                                        Backend                                       |                          Backend                         |                          Backend                         |                         Backend                         |                  Backend                   |
+|:------------------------------------------------------------------------------------:|:--------------------------------------------------------:|:--------------------------------------------------------:|:-------------------------------------------------------:|:------------------------------------------:|
+|![](https://i.postimg.cc/wjvLxZwK/RUID1213a1b32c4d4e2db5fae4628027f47c.jpg?size=120) | ![](https://i.postimg.cc/SNmc3J8x/IMG-6431.png?size=120) | ![](https://i.postimg.cc/vZN94hK4/IMG-0190.jpg?size=120) | ![](https://i.postimg.cc/pXkKHRYY/image-1.png?size=120) | ![](https://i.postimg.cc/c1RQFQvz/1702114078751.jpg?size=120) |
+| [육심헌](https://github.com/yokxim2) |[이은영](https://github.com/Eun-0)|[백현욱](github.com/hubaek)| [이지훈](https://github.com/LEEJI-HOON1) | [박인선](https://github.com/inseonbak) |
+
 <br>
 
 ## 기술 스택
@@ -60,7 +68,6 @@
 <img src="https://img.shields.io/badge/prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white"> 
 <img src="https://img.shields.io/badge/grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white"> <br>
 <img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white"> 
-<img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"> 
 <img src="https://img.shields.io/badge/amazon ec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white"> <br> 
 <img src="https://img.shields.io/badge/riot games-EB0029?style=for-the-badge&logo=riotgames&logoColor=white">
 
@@ -88,21 +95,21 @@
 ### 외부 API 키
 > 라이엇 개발자 포털에서는 API Key를 지급합니다. 라이엇 서버에서 제공하는 실제 데이터를 가져오기 위해서는 이 Key가 필요합니다.
 > API Key 지급 방법
-  >> 라이엇 개발자 포털에 접속한다. [라이엇 개발자 포털](https://developer.riotgames.com/)
+>> 라이엇 개발자 포털에 접속한다. [라이엇 개발자 포털](https://developer.riotgames.com/)
 
-  >> ![image](https://github.com/user-attachments/assets/4af7ba85-bde9-425a-b065-c3fc8dc08fd8)
-  >> 로봇이 아닙니다 인증 후 **Regenerate API Key**를 눌러서 Development API Key를 지급받는다. 
+>> ![image](https://github.com/user-attachments/assets/4af7ba85-bde9-425a-b065-c3fc8dc08fd8)
+>> 로봇이 아닙니다 인증 후 **Regenerate API Key**를 눌러서 Development API Key를 지급받는다.
 
-  >> 추가로 **Register Product**를 눌러서 더 높은 수준의 API Key를 받을 수도 있다. (자세한 획득 방법은 생략합니다.)
-  >> ![image](https://github.com/user-attachments/assets/aacb0f04-ea8a-4fa2-b178-9f6e5f55517f)
+>> 추가로 **Register Product**를 눌러서 더 높은 수준의 API Key를 받을 수도 있다. (자세한 획득 방법은 생략합니다.)
+>> ![image](https://github.com/user-attachments/assets/aacb0f04-ea8a-4fa2-b178-9f6e5f55517f)
 
-  >> Development API Key는 개발 목적의 API Key로 호출 제한은 다음과 같고, 만료 시간은 24시간이다.
-  >> ![image](https://github.com/user-attachments/assets/2f4ca34b-910d-4ccb-830a-b05908fd232d)
+>> Development API Key는 개발 목적의 API Key로 호출 제한은 다음과 같고, 만료 시간은 24시간이다.
+>> ![image](https://github.com/user-attachments/assets/2f4ca34b-910d-4ccb-830a-b05908fd232d)
 
-  >> Personal API Key는 간단한 프로젝트에 적합한 API Key로, 호출 제한은 Development API Key와 같고, 만료 시간은 없다.
+>> Personal API Key는 간단한 프로젝트에 적합한 API Key로, 호출 제한은 Development API Key와 같고, 만료 시간은 없다.
 
-  >> Production API Key는 복잡한 오픈소스용 프로젝트를 위한 API Key로, 호출 제한은 다음과 같고, 만료 시간은 없다.
-  >> ![image](https://github.com/user-attachments/assets/52295c52-196d-430e-90cf-fe24aed12e29)
+>> Production API Key는 복잡한 오픈소스용 프로젝트를 위한 API Key로, 호출 제한은 다음과 같고, 만료 시간은 없다.
+>> ![image](https://github.com/user-attachments/assets/52295c52-196d-430e-90cf-fe24aed12e29)
 
 <br>
 
@@ -110,7 +117,9 @@
 
 ### 1. 계정 연동(멤버당 최대 3개 계정 연동 가능)
 - URL: http://lolhaeduo.site/link/riot  [POST]
-   ```
+
+RequestBody
+   ```JSON
    {
     "accountType": {{게임 타입}},
     "accountUsername": {{연동한 계정 ID}},
@@ -120,46 +129,145 @@
     "server": {{서버}}
    }
    ```
-
-### 2. 듀오 신청
-- URL: http://lolhaeduo.site/duo  [POST]
-   ```
+ResponseBody
+   ```JSON
    {
-    "accountId": {{계정 ID}},
-    "queueType": "{{게임 큐 타입}}",
-    "primaryRole": "{{본인의 주 역할군}}",
-    "primaryChamp": "{{본인의 주 챔피언}}",
-    "secondaryRole": "{{본인의 부 역할군}}",
-    "secondaryChamp": "{{본인의 부 챔피언}}",
-    "targetRole": "{{원하는 듀오의 역할군}}",
-    "memo": "{{메모}}",
-    "mic": {{마이크 사용 여부}}
+    "accountId" : {{계정 ID}},
    }
    ```
 
-### 3. 듀오 조회
-- URL: http://lolhaeduo.site/duo   [GET]
+### 2. 듀오 신청
+- URL: http://lolhaeduo.site/duo  [POST]
+
+RequestBody
+   ```JSON
+   {
+    "accountId": {{계정 ID}},
+    "queueType": {{게임 큐 타입}},
+    "primaryRole": {{본인의 주 역할군}},
+    "primaryChamp": {{본인의 주 챔피언}},
+    "secondaryRole": {{본인의 부 역할군}},
+    "secondaryChamp": {{본인의 부 챔피언}},
+    "targetRole": {{원하는 듀오의 역할군}},
+    "memo": {{메모}},
+    "mic": {{마이크 사용 여부}}
+   }
    ```
-   QueryParam 형식
-   * queueType = {{게임 큐 타입}}
-   * lane = {{라인}}
-   * tier = {{티어}}
-   * page = {{조회하려는 페이지 번호}}
-   * size = {{한 페이지에 보이는 듀오 갯수}}
+ResponseBody
+   ```JSON
+{
+  "id": {{ID}},
+"queueType": {{게임 큐 타입}},
+"primaryRole": {{본인의 주 역할군}},
+"primaryChamp": {{본인의 주 챔피언}},
+"secondaryRole": {{본인의 부 역할군}},
+"secondaryChamp": {{본인의 부 챔피언}},
+"targetRole": {{원하는 듀오의 역할군}},
+"memo": {{메모}},
+"mic": {{마이크 사용 여부}},
+"tier": {{티어}},
+"ranks": {{랭크}},
+"kda": {
+"kills": {{킬 수}},
+"deaths": {{데스 수}},
+"assists": {{어시스트 수}}
+},
+"favoriteId": [{{즐겨찾기 ID 목록}}],
+"wins": {{승리 수}},
+"losses": {{패배 수}},
+"profileIcon": {{프로필 아이콘 URL}},
+"memberId": {{멤버 ID}},
+"accountId": {{계정 ID}},
+"winRate": {{승률}}
+}
+
+   ```
+
+
+### 3. 듀오 조회
+- URL: http://lolhaeduo.site/duo   [GET] ㅌ
+
+ResponseBody
+
+   ```JSON
+  {
+  "id": {{ID}},
+  "profileIconId": {{프로필 아이콘 ID}},
+  "summonerName": {{소환사 이름}},
+  "tagLine": {{태그라인}},
+  "queueType": {{게임 큐 타입}},
+  "tier": {{티어}},
+  "rank": {{랭크}},
+  "winRate": {{승률}},
+  "kda": {
+    "kills": {{킬 수}},
+    "deaths": {{데스 수}},
+    "assists": {{어시스트 수}}
+  },
+  "favorites": [{{즐겨찾기 1}}, {{즐겨찾기 2}}, {{즐겨찾기 3}}],
+  "primaryRole": {{본인의 주 역할군}},
+  "targetRole": {{원하는 듀오의 역할군}},
+  "primaryChamp": {{본인의 주 챔피언}},
+  "secondaryRole": {{본인의 부 역할군}},
+  "secondaryChamp": {{본인의 부 챔피언}},
+  "memo": {{메모}},
+  "mic": {{마이크 사용 여부}},
+  "memberId": {{멤버 ID}},
+  "accountId": {{계정 ID}},
+  "relativeTime": {{듀오 찾기 생성 시간}}
+}
+
    ```
 
 ### 4. 듀오 수정
 - URL: http://lolhaeduo.site/duo/{duoId}  [PUT]
-   ```
+
+RequestBody
+   ```JSON
    {
-   "queueType": "{{게임 큐 타입}}",
-    "primaryRole": "{{본인의 주 역할군}}",
-    "targetRole": "{{원하는 듀오의 역할군}}",
-    "memo": "{{메모}}",
-    "mic": {{마이트 사용 여부}}
+  "queueType": {{게임 큐 타입}},
+  "primaryRole": {{주 역할군}},
+  "primaryChamp": {{주 역할군의 선호 챔피언}},
+  "secondaryRole": {{부 역할군}},
+  "secondaryChamp": {{부 역할군의 선호 챔피언}},
+  "targetRole": {{선호하는 매칭 역할군}},
+  "memo": {{50자 이내 메모}},
+  "mic": {{마이크 사용 여부}}
    }
    ```
-  
+ResponseBody
+   ```JSON
+   {
+
+  "duoId": {{듀오 찾기 ID}},
+"queueType": {{게임 큐 타입}},
+"primaryRole": {{주 역할군}},
+"primaryChamp": {{주 역할군의 선호 챔피언}},
+"secondaryRole": {{부 역할군}},
+"secondaryChamp": {{부 역할군의 선호 챔피언}},
+"targetRole": {{선호하는 매칭 역할군}},
+"memo": {{메모}},
+"mic": {{마이크 사용 여부}},
+"tier": {{신청한 유저의 티어}},
+"ranks": {{신청한 유저의 랭크}},
+"wins": {{승리 수}},
+"losses": {{패배 수}},
+"favoritesChamp": [{{선호 챔피언 ID 목록}}],
+"profileIcon": {{프로필 아이콘 URL}},
+"kda": {
+"kills": {{킬 수}},
+"deaths": {{데스 수}},
+"assists": {{어시스트 수}}
+},
+"memberId": {{신청한 유저의 ID}},
+"accountId": {{신청한 유저의 연동 계정 ID}},
+"createdAt": {{듀오 찾기 생성 일자}},
+"modifiedAt": {{듀오 찾기 수정 일자}}
+
+
+   }
+   ```
+
 ### 5. 듀오 삭제
 - URL: http://lolhaeduo.site/duo/{duoId}  [DELETE]
 
