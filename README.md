@@ -120,66 +120,69 @@
 
 RequestBody
    ```JSON
-   {
-    "accountType": {{게임 타입}},
-    "accountUsername": {{연동한 계정 ID}},
-    "accountPassword": {{연동한 계정 비밀번호}},
-    "summonerName": {{소환사명}},
-    "tagLine": {{태그라인}},
-    "server": {{서버}}
-   }
+{
+  "accountType": "LOL",
+  "accountUsername": "summoner123",
+  "accountPassword": "password123",
+  "summonerName": "바텀개",
+  "tagLine": "#KR1",
+  "server": "KR"
+}
+
    ```
 ResponseBody
    ```JSON
-   {
-    "accountId" : {{계정 ID}},
-   }
-   ```
+{
+  "accountId": 101
+}
 
+```
 ### 2. 듀오 신청
 - URL: http://lolhaeduo.site/duo  [POST]
 
 RequestBody
    ```JSON
-   {
-    "accountId": {{계정 ID}},
-    "queueType": {{게임 큐 타입}},
-    "primaryRole": {{본인의 주 역할군}},
-    "primaryChamp": {{본인의 주 챔피언}},
-    "secondaryRole": {{본인의 부 역할군}},
-    "secondaryChamp": {{본인의 부 챔피언}},
-    "targetRole": {{원하는 듀오의 역할군}},
-    "memo": {{메모}},
-    "mic": {{마이크 사용 여부}}
-   }
+{
+  "accountId": 11,
+  "queueType": "RANKED_SOLO_5x5",
+  "primaryRole": "MID",
+  "primaryChamp": "Ahri",
+  "secondaryRole": "TOP",
+  "secondaryChamp": "Yasuo",
+  "targetRole": "JUNGLE",
+  "memo": "듀오 구해요",
+  "mic": true
+}
+
    ```
 ResponseBody
    ```JSON
 {
-  "id": {{ID}},
-"queueType": {{게임 큐 타입}},
-"primaryRole": {{본인의 주 역할군}},
-"primaryChamp": {{본인의 주 챔피언}},
-"secondaryRole": {{본인의 부 역할군}},
-"secondaryChamp": {{본인의 부 챔피언}},
-"targetRole": {{원하는 듀오의 역할군}},
-"memo": {{메모}},
-"mic": {{마이크 사용 여부}},
-"tier": {{티어}},
-"ranks": {{랭크}},
-"kda": {
-"kills": {{킬 수}},
-"deaths": {{데스 수}},
-"assists": {{어시스트 수}}
-},
-"favoriteId": [{{즐겨찾기 ID 목록}}],
-"wins": {{승리 수}},
-"losses": {{패배 수}},
-"profileIcon": {{프로필 아이콘 URL}},
-"memberId": {{멤버 ID}},
-"accountId": {{계정 ID}},
-"winRate": {{승률}}
+  "id": 123,
+  "queueType": "RANKED_SOLO_5x5",
+  "primaryRole": "MID",
+  "primaryChamp": "Ahri",
+  "secondaryRole": "TOP",
+  "secondaryChamp": "Yasuo",
+  "targetRole": "JUNGLE",
+  "memo": "듀오 구해요",
+  "mic": true,
+  "tier": "Diamond",
+  "ranks": "II",
+  "kda": {
+    "kills": 8,
+    "deaths": 2,
+    "assists": 10
+  },
+  "favoriteId": [1, 101, 117],
+  "wins": 50,
+  "losses": 30,
+  "profileIcon": "https://example.com/icon.png",
+  "memberId": 2001,
+  "accountId": 101,
+  "winRate": 63
 }
+
 
    ```
 
@@ -191,31 +194,32 @@ ResponseBody
 
    ```JSON
   {
-  "id": {{ID}},
-  "profileIconId": {{프로필 아이콘 ID}},
-  "summonerName": {{소환사 이름}},
-  "tagLine": {{태그라인}},
-  "queueType": {{게임 큐 타입}},
-  "tier": {{티어}},
-  "rank": {{랭크}},
-  "winRate": {{승률}},
+  "id": 123,
+  "profileIconId": "12345",
+  "summonerName": "바텀개",
+  "tagLine": "#KR1",
+  "queueType": "RANKED_SOLO_5x5",
+  "tier": "Diamond",
+  "rank": "II",
+  "winRate": 63,
   "kda": {
-    "kills": {{킬 수}},
-    "deaths": {{데스 수}},
-    "assists": {{어시스트 수}}
+    "kills": 8,
+    "deaths": 2,
+    "assists": 10
   },
-  "favorites": [{{즐겨찾기 1}}, {{즐겨찾기 2}}, {{즐겨찾기 3}}],
-  "primaryRole": {{본인의 주 역할군}},
-  "targetRole": {{원하는 듀오의 역할군}},
-  "primaryChamp": {{본인의 주 챔피언}},
-  "secondaryRole": {{본인의 부 역할군}},
-  "secondaryChamp": {{본인의 부 챔피언}},
-  "memo": {{메모}},
-  "mic": {{마이크 사용 여부}},
-  "memberId": {{멤버 ID}},
-  "accountId": {{계정 ID}},
-  "relativeTime": {{듀오 찾기 생성 시간}}
+  "favorites": ["Ahri", "Yasuo", "Thresh"],
+  "primaryRole": "MID",
+  "targetRole": "JUNGLE",
+  "primaryChamp": "Ahri",
+  "secondaryRole": "TOP",
+  "secondaryChamp": "Yasuo",
+  "memo": "듀오 하실분",
+  "mic": true,
+  "memberId": 2001,
+  "accountId": 101,
+  "relativeTime": "2 hours ago"
 }
+
 
    ```
 
@@ -224,48 +228,47 @@ ResponseBody
 
 RequestBody
    ```JSON
-   {
-  "queueType": {{게임 큐 타입}},
-  "primaryRole": {{주 역할군}},
-  "primaryChamp": {{주 역할군의 선호 챔피언}},
-  "secondaryRole": {{부 역할군}},
-  "secondaryChamp": {{부 역할군의 선호 챔피언}},
-  "targetRole": {{선호하는 매칭 역할군}},
-  "memo": {{50자 이내 메모}},
-  "mic": {{마이크 사용 여부}}
-   }
+{
+  "queueType": "RANKED_SOLO_5x5",
+  "primaryRole": "TOP",
+  "primaryChamp": "Ahri",
+  "secondaryRole": "MID",
+  "secondaryChamp": "Yasuo",
+  "targetRole": "JUNGLE",
+  "memo": "듀오 안해요",
+  "mic": true
+}
+
    ```
 ResponseBody
    ```JSON
    {
+  "duoId": 123,
+  "queueType": "RANKED_SOLO_5x5",
+  "primaryRole": "TOP",
+  "primaryChamp": "Ahri",
+  "secondaryRole": "MID",
+  "secondaryChamp": "Yasuo",
+  "targetRole": "JUNGLE",
+  "memo": "듀오 안해요.",
+  "mic": true,
+  "tier": "Diamond",
+  "ranks": "II",
+  "wins": 52,
+  "losses": 30,
+  "favoritesChamp": [1, 101, 117],
+  "profileIcon": "https://example.com/icon.png",
+  "kda": {
+    "kills": 8,
+    "deaths": 2,
+    "assists": 10
+  },
+  "memberId": 2001,
+  "accountId": 101,
+  "createdAt": "2025-01-06T10:00:00",
+  "modifiedAt": "2025-01-06T12:00:00"
+}
 
-  "duoId": {{듀오 찾기 ID}},
-"queueType": {{게임 큐 타입}},
-"primaryRole": {{주 역할군}},
-"primaryChamp": {{주 역할군의 선호 챔피언}},
-"secondaryRole": {{부 역할군}},
-"secondaryChamp": {{부 역할군의 선호 챔피언}},
-"targetRole": {{선호하는 매칭 역할군}},
-"memo": {{메모}},
-"mic": {{마이크 사용 여부}},
-"tier": {{신청한 유저의 티어}},
-"ranks": {{신청한 유저의 랭크}},
-"wins": {{승리 수}},
-"losses": {{패배 수}},
-"favoritesChamp": [{{선호 챔피언 ID 목록}}],
-"profileIcon": {{프로필 아이콘 URL}},
-"kda": {
-"kills": {{킬 수}},
-"deaths": {{데스 수}},
-"assists": {{어시스트 수}}
-},
-"memberId": {{신청한 유저의 ID}},
-"accountId": {{신청한 유저의 연동 계정 ID}},
-"createdAt": {{듀오 찾기 생성 일자}},
-"modifiedAt": {{듀오 찾기 수정 일자}}
-
-
-   }
    ```
 
 ### 5. 듀오 삭제
