@@ -29,7 +29,8 @@ public class JwtFilter extends HttpFilter {
 
         log.info("필터 통과하는 url: {}", url);
         if ( StringUtils.hasText(url) &&
-                ( url.startsWith("/signup")
+                ( url.equals("/")
+                        || url.startsWith("/signup")
                         || url.startsWith("/login")
                         || ( url.startsWith("/duo") && method.equals("GET") )
                 )
