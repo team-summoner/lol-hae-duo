@@ -23,6 +23,8 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
           script: |
+            echo "Checking APPLICATION_PROPERTIES:"
+            echo "$APPLICATION_PROPERTIES"
             cd /home/ubuntu/lol-hae-duo
             rm -rf src/main/resources/application.yml
             git pull origin dev
