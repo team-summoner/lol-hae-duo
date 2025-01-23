@@ -26,7 +26,7 @@ jobs:
             cd /home/ubuntu/lol-hae-duo
             rm -rf src/main/resources/application.yml
             git pull origin dev
-            echo "${{ secrets.APPLICATION_PROPERTIES }} > /src/main/resources/application.yml
+            echo "$APPLICATION_PROPERTIES" > src/main/resources/application.yml
             ./gradlew clean build
             sudo fuser -k -n tcp 8080 || true
             nohup java -jar build/libs/*SNAPSHOT.jar > ./output.log 2>&1 &
