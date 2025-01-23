@@ -24,12 +24,19 @@ jobs:
           script_stop: true
           script: |
             echo "Checking APPLICATION_PROPERTIES:"
-            echo "$APPLICATION_PROPERTIES"
+            echo "$APPLICATION_PROPERTIES" | head -c 100
             cd /home/ubuntu/lol-hae-duo
             rm -rf src/main/resources/application.yml
             git pull origin dev
-            echo "$APPLICATION_PROPERTIES" > src/main/resources/application.yml
+            echo "Writing application.yml..."
+            printf "%s" "$APPLICATION_PROPERTIES" > src/main/resources/application.yml
+            echo "Generated application.yml content:"
             cat src/main/resources/application.yml
+            echo "Building application..."
             ./gradlew clean build
+            echo "Stopping existing application on port 8080..."
             sudo fuser -k -n tcp 8080 || true
+            echo "Starting application..."
             nohup java -jar build/libs/*SNAPSHOT.jar > ./output.log 2>&1 &
+            echo "Checking application logs:"
+            tail -n 20 ./output.log
