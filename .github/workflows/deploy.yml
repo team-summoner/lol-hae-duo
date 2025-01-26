@@ -38,5 +38,5 @@ jobs:
             fi
           
             ./gradlew clean build
-            pkill -f 'java -jar' || true
+            sudo fuser -k -n tcp 8080 || true
             nohup java -jar -Dspring.profiles.active=prod build/libs/*SNAPSHOT.jar > app.log 2>&1 &
