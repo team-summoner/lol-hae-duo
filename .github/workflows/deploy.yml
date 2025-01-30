@@ -35,7 +35,7 @@ jobs:
             
             sudo fuser -k -n tcp 8080 || true
             nohup java -jar \
-              -Dspring.profiles.active-prod \
+              -Dspring.profiles.active=prod \
               -DRIOT_API_KEY=${{ secrets.RIOT_API_KEY }} \
               -DJWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
               -DMYSQL_URL=${{ secrets.MYSQL_URL }} \
