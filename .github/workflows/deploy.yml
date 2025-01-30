@@ -25,7 +25,7 @@ jobs:
             MYSQL_URL=${{ secrets.MYSQL_URL }}
             MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }}
             MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-          script_stop: true
+          script_stop: false
           script: |
             cd ~/lol-hae-duo
           
