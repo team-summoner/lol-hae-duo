@@ -34,11 +34,10 @@ jobs:
             ./gradlew clean build
             
             sudo fuser -k -n tcp 8080 || true
-            nohup java -jar \
-              -Dspring.profiles.active=prod \
+            nohup java -Dspring.profiles.active=prod \
               -DRIOT_API_KEY=${{ secrets.RIOT_API_KEY }} \
               -DJWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
               -DMYSQL_URL=${{ secrets.MYSQL_URL }} \
               -DMYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} \
               -DMYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} \
-              build/libs/lol-hae-duo-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+              -jar build/libs/lol-hae-duo-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
