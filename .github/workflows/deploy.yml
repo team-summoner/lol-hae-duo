@@ -19,12 +19,6 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          envs: |
-            RIOT_API_KEY=${{ secrets.RIOT_API_KEY }}
-            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
-            MYSQL_URL=${{ secrets.MYSQL_URL }}
-            MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }}
-            MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
           script_stop: false
           script: |
             cd ~/lol-hae-duo
@@ -38,5 +32,13 @@ jobs:
             fi
           
             ./gradlew clean build
+            
             sudo fuser -k -n tcp 8080 || true
-            nohup java -jar -Dspring.profiles.active=prod build/libs/lol-hae-duo-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+            nohup java -jar \
+              -Dspring.profiles.active-prod \
+              -DRIOT_API_KEY=${{ secrets.RIOT_API_KEY }} \
+              -DJWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+              -DMYSQL_URL=${{ secrets.MYSQL_URL }} \
+              -DMYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }} \
+              -DMYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }} \
+              build/libs/lol-hae-duo-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
