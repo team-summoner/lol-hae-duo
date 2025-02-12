@@ -6,6 +6,8 @@
 
 요청 URL: http://lolhaeduo.site
 
+<현재는 서비스 이용이 중단되었습니다>
+
 <br>
 
 ## 📖 목차
@@ -15,7 +17,6 @@
 3. [기술 스택](#기술-스택)
 4. [실행 방법](#실행-방법)
 5. [주요 기능](#주요-기능)
-6. [참고 자료](#참고-자료)
 
 <br>
 
@@ -38,6 +39,12 @@
 
 <br>
 
+팀 노션 페이지 : [노션](https://teamsparta.notion.site/17b2dc3ef51481e59c67f9c62e2da5fa)
+
+브로셔 노션 페이지 : [노션](https://hubaek.notion.site/3-1723619d0e47815285c7f9ce371dc559?pvs=4)
+
+<br>
+
 ## 팀원 소개
 
 
@@ -46,6 +53,16 @@
 |![](https://i.postimg.cc/wjvLxZwK/RUID1213a1b32c4d4e2db5fae4628027f47c.jpg?size=120) | ![](https://ifh.cc/g/65d0vS.png?size=120) | ![](https://i.postimg.cc/vZN94hK4/IMG-0190.jpg?size=120) | ![](https://i.postimg.cc/pXkKHRYY/image-1.png?size=120) | ![](https://i.postimg.cc/c1RQFQvz/1702114078751.jpg?size=120) |
 | [육심헌](https://github.com/yokxim2) |      [이은영](https://github.com/Eun-0)      |[백현욱](github.com/hubaek)| [이지훈](https://github.com/LEEJI-HOON1) | [박인선](https://github.com/inseonbak) |
 | [블로그](https://yokxim.tistory.com/) |  [블로그](https://1step2dream.tistory.com)   | [블로그](https://hubaek.tistory.com/) | [블로그](https://ezy-i.tistory.com/) |  [블로그](https://insight9145.tistory.com/) |
+<br>
+
+|   팀원   | <center>역할</center> |
+|:--------:|:-----------|
+| 육심헌 | - 프로젝트 방향성 지도, 계획 수립, 전체 총괄 <br> - 외부 API 호출 Client 코드 작성(RestTemplate, 데이터 가공 로직) <br> - Spring Event를 사용한 비동기 로직 작성, 스레드 풀 조정 <br> - Lambda Function을 사용해 대체 서버 생성 및 운용 <br> - Spring Retry를 사용해서 메서드 재처리 로직 도입 |
+| 이은영 | - Postman을 이용한 API 문서화, 시스템 아키텍처 설계 <br> - 커스텀 필터를 사용한 JWT 기반 인증/인가 처리 <br> - 비동기 처리 과정에서 thread pool 조정 <br> - RestTemplate을 이용한 Riot API 호출에 대한 커스텀 매트릭 등록 <br> - Prometheus를 이용한 매트릭 수집 및 Grafana를 이용한 매트릭 시각화 <br> - 모니터링 서버 구축 |
+| 백현욱 | - Riot API 연동, 랭크 전적 데이터 및 프로필 아이콘 정보 수집 <br> - 가비아를 통해 프로젝트 도메인 구매 <br> - 구매한 도메인을 AWS EC2와 연결하기 위해 DNS 설정 구성 |
+| 이지훈 | - 듀오 조회 리스트 API 코드 작성 <br> - 동기/비동기 개념 학습 <br> - block/non-block 개념 학습 <br> - AWS, EC2 개념 학습 <br> - 기타 프로젝트 부족한 부분 조사 및 학습 |
+| 박인선 | - Amazon SQS 개념 학습 <br> - 단위시간 내 API 호출 횟수 제한: Resilience4J 라이브러리의 TimeLimiter 개념 학습 |
+
 <br>
 
 ## 기술 스택
@@ -284,11 +301,3 @@ API 테스트를 위해 [Postman 워크스페이스](https://github.com/user-att
 1. Postman에서 'Import' 버튼 클릭
 2. 다운로드한 'lol-hae-duo_postman_workspace.json' 파일을 선택
 3. 워크스페이스에서 API 테스트 진행
-
-<br>
-
-## 참고 자료
-
-팀 노션 페이지 : [노션](https://www.notion.so/teamsparta/b953cd528364428a9c2fa6c5433efc38)
-
-브로셔 노션 페이지 : [노션](https://hubaek.notion.site/3-1723619d0e47815285c7f9ce371dc559?pvs=4)
