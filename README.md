@@ -15,8 +15,9 @@
 1. [프로젝트 소개](#프로젝트-소개)
 2. [팀원 소개](#팀원-소개)
 3. [기술 스택](#기술-스택)
-4. [실행 방법](#실행-방법)
+4. [문제 해결 과정](#문제-해결-과정)
 5. [주요 기능](#주요-기능)
+6. [실행 방법](#실행-방법)
 
 <br>
 
@@ -103,28 +104,40 @@
 
 <br> 
 
-## 실행 방법
+## 문제 해결 과정
 
-### 외부 API 키
-> 라이엇 개발자 포털에서는 API Key를 지급합니다. 라이엇 서버에서 제공하는 실제 데이터를 가져오기 위해서는 이 Key가 필요합니다.
-> API Key 지급 방법
->> 라이엇 개발자 포털에 접속한다. [라이엇 개발자 포털](https://developer.riotgames.com/)
+### Riot API를 비동기로 호출하기 위해 Spring Event 사용
+* 초기에는 게시글 작성 시 Riot API를 호출하여 실시간으로 전적 데이터를 조회하는 방식 사용
+* 그러나 게임을 많이 플레이한 유저일수록 API 응답 시간이 길어져 게시글 작성 속도가 느려지는 문제 발생
+* 이를 해결하기 위해 계정 연동 시 Riot API를 비동기 호출하여 미리 전적 데이터를 조회 및 저장하는 방식으로 변경
+* Spring Event를 활용해 비동기 처리를 구현하여 계정 연동 응답을 빠르게 반환하고, 전적 데이터는 백그라운드에서 안전하게 수집
 
->> ![image](https://github.com/user-attachments/assets/4af7ba85-bde9-425a-b065-c3fc8dc08fd8)
->> 로봇이 아닙니다 인증 후 **Regenerate API Key**를 눌러서 Development API Key를 지급받는다.
+### AWS Lambda를 사용해서 Rate Limit 문제 우회
+* Production API Key 발급을 고려했지만, 승인 대기 기간(최대 2주)으로 인해 사용 불가능
+* 주어진 Person API Key는 초당 20회, 2분당 100회 제한이 있어, 다수의 경기 데이터를 조회할 때 응답 지연 발생
+* TimeLimiter를 사용한 호출 속도 제한을 고려했지만, 긴 응답 시간으로 인해 사용자 경험 저하
+* AWS Lambda 기반의 Mock 서버를 구축하여 테스트 환경에서 Rate Limit 문제 우회
+* Lambda 내부에서 실제 Riot API와 유사한 환경을 만들기 위해 지연 시간을 추가하여 동작 구현
 
->> 추가로 **Register Product**를 눌러서 더 높은 수준의 API Key를 받을 수도 있다. (자세한 획득 방법은 생략합니다.)
->> ![image](https://github.com/user-attachments/assets/aacb0f04-ea8a-4fa2-b178-9f6e5f55517f)
+### 모니터링을 통한 문제 인식과 스레드 풀 조정을 통한 성능 개선
+* 지연 시간, CPU 사용률, 동시 처리 개수를 모니터링하여 성능 점검
+* 대량의 API 요청 시 지연 시간이 지나치게 오래 걸리는 문제 확인 (예: API 호출 4,500회 -> 25분 소요)
+![Image](https://github.com/user-attachments/assets/70b51929-7345-47e0-b688-1a7625b45652)
 
->> Development API Key는 개발 목적의 API Key로 호출 제한은 다음과 같고, 만료 시간은 24시간이다.
->> ![image](https://github.com/user-attachments/assets/2f4ca34b-910d-4ccb-830a-b05908fd232d)
 
->> Personal API Key는 간단한 프로젝트에 적합한 API Key로, 호출 제한은 Development API Key와 같고, 만료 시간은 없다.
+* 기존 코드에서 API 요청을 반복문(for loop)으로 순차적으로 처리하여 동기적으로 동작, 매치 데이터를 가져오는 스레드가 2개밖에 없어 다수의 요청이 대기하면서 병목 현상 발생
+  ![Image](https://github.com/user-attachments/assets/48520ca0-d867-4719-8186-ebbfb0f0f70d)
 
->> Production API Key는 복잡한 오픈소스용 프로젝트를 위한 API Key로, 호출 제한은 다음과 같고, 만료 시간은 없다.
->> ![image](https://github.com/user-attachments/assets/52295c52-196d-430e-90cf-fe24aed12e29)
 
-<br>
+* 비동기로 동작하는 각 스레드 내부에서 스레드 풀을 10개로 확장하여 병렬 처리 성능 개선, Riot API 호출 속도 10배 향상
+  ![Image](https://github.com/user-attachments/assets/4e1a18ed-b84f-4d48-994d-98e959a26cc5)
+
+
+### 대량의 API 호출로 인해 발생하는 서버 문제를 재시도 로직으로 개선
+* 스레드 풀을 확장하여 전적 데이터를 빠르게 가져오는 데 성공했지만, 여러 계정을 동시에 조회할 경우 503 오류 발생
+* 기존 코드에서는 API 동시 호출이 최대 20번까지 발생하여 초과 요청이 거부됨
+* AWS Lambda의 프리 티어 동시 호출 제한을 살펴본 결과 동시에 최대 10개의 요청만 처리할 수 있어 제한에 걸림
+* Spring Retry를 활용해서 요청 성공률을 99.8%까지 개선 (1000회 요청 당 실패 2회)
 
 ##  주요 기능
 
@@ -292,6 +305,35 @@ ResponseBody
 
 ### 5. 듀오 삭제
 - URL: http://lolhaeduo.site/duo/{duoId}  [DELETE]
+
+<br>
+
+## 실행 방법
+
+### 외부 API 키
+- 라이엇 개발자 포털에서는 API Key를 지급합니다. 라이엇 서버에서 제공하는 실제 데이터를 가져오기 위해서는 이 Key가 필요합니다.
+
+### API Key 지급 방법
+
+라이엇 개발자 포털에 접속한다. [라이엇 개발자 포털](https://developer.riotgames.com/)
+
+![image](https://github.com/user-attachments/assets/4af7ba85-bde9-425a-b065-c3fc8dc08fd8)
+- 로봇이 아닙니다 인증 후 **Regenerate API Key**를 눌러서 Development API Key를 지급받는다.
+
+
+- 추가로 **Register Product**를 눌러서 더 높은 수준의 API Key를 받을 수도 있다. (자세한 획득 방법은 생략)
+![image](https://github.com/user-attachments/assets/aacb0f04-ea8a-4fa2-b178-9f6e5f55517f)
+
+
+- Development API Key는 개발 목적의 API Key로 호출 제한은 다음과 같고, 만료 시간은 24시간이다.
+![image](https://github.com/user-attachments/assets/2f4ca34b-910d-4ccb-830a-b05908fd232d)
+
+
+- Personal API Key는 간단한 프로젝트에 적합한 API Key로, 호출 제한은 Development API Key와 같고, 만료 시간은 없다.
+
+
+- Production API Key는 복잡한 오픈소스용 프로젝트를 위한 API Key로, 호출 제한은 다음과 같고, 만료 시간은 없다.
+![image](https://github.com/user-attachments/assets/52295c52-196d-430e-90cf-fe24aed12e29)
 
 <br>
 
